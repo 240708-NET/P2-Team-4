@@ -7,7 +7,7 @@ namespace Project2.App.Main {
         private Random refRand => RefMGame.Rand;
 
         private ManagerActor refMActor => RefMGame.M_Actor;
-        private GameActor player => refMActor.Player;
+        private ActorPlayer player => refMActor.Player;
 
         private ManagerCombat refMCombat => RefMGame.M_Combat;
 

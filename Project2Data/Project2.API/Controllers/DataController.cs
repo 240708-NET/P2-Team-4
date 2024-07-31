@@ -21,13 +21,13 @@ namespace Project2.API.Controllers {
         /// </summary>
         /// <returns>Dictionary of local enemy objects with name as key</returns>
         [HttpGet("/getAllEnemies")]
-        public Dictionary<string, GameActor> GetAllEnemies() {
+        public Dictionary<string, ActorEnemy> GetAllEnemies() {
             return _Data.GetAllEnemies();
         }
 
         //  PostMethod - Create All Enemies
         [HttpPost("/createAllEnemies")]
-        public Dictionary<string, GameActor> CreateAllEnemies([FromBody] Dictionary<string, GameActor> pEnemies) {
+        public Dictionary<string, ActorEnemy> CreateAllEnemies([FromBody] Dictionary<string, ActorEnemy> pEnemies) {
             return _Data.CreateAllEnemies(pEnemies);
         }
     }
