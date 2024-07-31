@@ -9,7 +9,7 @@ namespace Project2.App.Main {
         private Random refRand => refMGame.Rand;
 
         //  Player Variables
-        private GameActor player;
+        private ActorPlayer player;
 
         //  Constructor
         public ManagerActor_CC(ManagerActor pRef) {
@@ -17,11 +17,11 @@ namespace Project2.App.Main {
             RefMActor = pRef;
 
             // Setup Player
-            player = new GameActor();
+            player = new ActorPlayer();
         }
 
         //  MainMethod - Character Creation
-        public GameActor CharacterCreation() {
+        public ActorPlayer CharacterCreation() {
             CC_Name();
             CC_Attribute();
             CC_Class();

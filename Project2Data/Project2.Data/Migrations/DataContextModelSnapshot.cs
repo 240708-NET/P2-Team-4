@@ -21,7 +21,7 @@ namespace Project2.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Project2.Models.Actor.GameActor", b =>
+            modelBuilder.Entity("Project2.Models.Actor.ActorEnemy", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -41,24 +41,13 @@ namespace Project2.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Class")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("DefenseArmor")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Experience")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HealthDice")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Level")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()

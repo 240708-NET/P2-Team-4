@@ -11,7 +11,7 @@ namespace Project2.Data {
         }
 
         //  GetMethod - Get Enemy
-        public GameActor? GetEnemy(GameActor pEnemy) {
+        public ActorEnemy? GetEnemy(ActorEnemy pEnemy) {
             var found = from e in context.Enemies.ToList()
                 where e.Id == pEnemy.Id
                 select e;
@@ -24,20 +24,20 @@ namespace Project2.Data {
         /// Gets all enemies from database, builds objects from the server information
         /// </summary>
         /// <returns>Dictionary of local enemy objects with name as key</returns>
-        public Dictionary<string, GameActor> GetAllEnemies() {
-            Dictionary<string, GameActor> result = new Dictionary<string, GameActor>();
+        public Dictionary<string, ActorEnemy> GetAllEnemies() {
+            Dictionary<string, ActorEnemy> result = new Dictionary<string, ActorEnemy>();
 
-            List<GameActor> enemies = context.Enemies.ToList();
+            List<ActorEnemy> enemies = context.Enemies.ToList();
             //Console.WriteLine(enemies[0].ActorStr);
-            foreach(GameActor enemy in enemies) {
-                result.Add($"{enemy.Name.Split("_")[0]}", new GameActor(enemy));
+            foreach(ActorEnemy enemy in enemies) {
+                result.Add($"{enemy.Name.Split("_")[0]}", new ActorEnemy(enemy));
             }
 
             return result;
         }
 
         //  PostMethod - Create Enemy
-        public GameActor? CreateEnemy(GameActor pEnemy) {
+        public ActorEnemy? CreateEnemy(ActorEnemy pEnemy) {
             context.Add(pEnemy);
             context.SaveChanges();
 
@@ -45,7 +45,7 @@ namespace Project2.Data {
         }
 
         //  PostMethod - Create All Enemies
-        public Dictionary<string, GameActor> CreateAllEnemies(Dictionary<string, GameActor> pEnemies) {
+        public Dictionary<string, ActorEnemy> CreateAllEnemies(Dictionary<string, ActorEnemy> pEnemies) {
             foreach(var enemy in pEnemies) {
                 context.Add(enemy.Value);
             }

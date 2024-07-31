@@ -3,7 +3,7 @@ using Project2.Models.Actor;
 
 namespace Project2.Data {
     public class DataContext : DbContext {
-        public DbSet<GameActor> Enemies => Set<GameActor>();
+        public DbSet<ActorEnemy> Enemies => Set<ActorEnemy>();
 
         //  Constructor
         public DataContext() {

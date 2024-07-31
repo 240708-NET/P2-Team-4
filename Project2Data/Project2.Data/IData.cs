@@ -2,10 +2,10 @@ using Project2.Models.Actor;
 
 namespace Project2.Data {
     public interface IData {
-        public GameActor? GetEnemy(GameActor pEnemy);
-        public Dictionary<string, GameActor> GetAllEnemies();
+        public ActorEnemy? GetEnemy(ActorEnemy pEnemy);
+        public Dictionary<string, ActorEnemy> GetAllEnemies();
         
-        public GameActor? CreateEnemy(GameActor pEnemy);
-        public Dictionary<string, GameActor> CreateAllEnemies(Dictionary<string, GameActor> pEnemies);
+        public ActorEnemy? CreateEnemy(ActorEnemy pEnemy);
+        public Dictionary<string, ActorEnemy> CreateAllEnemies(Dictionary<string, ActorEnemy> pEnemies);
     }
 }

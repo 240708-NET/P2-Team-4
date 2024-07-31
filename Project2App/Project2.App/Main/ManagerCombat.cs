@@ -15,8 +15,8 @@ namespace Project2.App.Main {
         private string combatUI_Empty => $"+{new string(' ', 29)}+";
 
         //  Enemy Variables
-        private GameActor enemy;
-        public GameActor Enemy {
+        private ActorEnemy enemy;
+        public ActorEnemy Enemy {
             get { return enemy; }
             set {
                 enemy = value;
@@ -35,7 +35,7 @@ namespace Project2.App.Main {
         private string enemy_AC => $"+ {new string(' ', (23 - enemy_ACRange.Length))}AC: {enemy_ACRange} +";
 
         //  Player Variables
-        private GameActor player => RefMGame.M_Actor.Player;
+        private ActorPlayer player => RefMGame.M_Actor.Player;
 
         private string player_Name => $"+ {player.Name}{new string(' ', (27 - player.Name.Length))} +";
         private string player_Health => $"+ HP: {player.HealthStr}{new string(' ', (23 - player.HealthStr.Length))} +";
@@ -54,7 +54,7 @@ namespace Project2.App.Main {
             combatActive = true;
 
             //  Setup Enemy
-            enemy = new GameActor(RefMGame.M_Actor.GetEnemy());
+            enemy = new ActorEnemy(RefMGame.M_Actor.GetEnemy());
 
             enemy_ACLow = -999;
             enemy_ACHigh = 999;
@@ -66,7 +66,7 @@ namespace Project2.App.Main {
             combatActive = true;
 
             //  Setup Enemy
-            enemy = new GameActor(RefMGame.M_Actor.GetEnemy());
+            enemy = new ActorEnemy(RefMGame.M_Actor.GetEnemy());
 
             enemy_ACLow = -999;
             enemy_ACHigh = 999;

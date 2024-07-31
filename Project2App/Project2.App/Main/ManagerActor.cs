@@ -11,14 +11,14 @@ namespace Project2.App.Main {
         private Random refRand => RefMGame.Rand;
 
         //  Enemy Variables
-        public Dictionary<string, GameActor> D_Enemies { get; private set; }
+        public Dictionary<string, ActorEnemy> D_Enemies { get; private set; }
         private List<string> enemyKeys;
 
         //  Level Varaibles
         public Dictionary<string, int> D_LevelReqs { get; private set; }
 
         //  Player Variables
-        public GameActor Player { get; private set; }
+        public ActorPlayer Player { get; private set; }
 
         //  Constructor
         /// <summary>
@@ -56,12 +56,12 @@ namespace Project2.App.Main {
             };
 
             //  Setup Enemy
-            D_Enemies = new Dictionary<string, GameActor>();
+            D_Enemies = new Dictionary<string, ActorEnemy>();
             enemyKeys = new List<string>();
             AddEnemies();
 
             //  Setup Player
-            Player = new GameActor();
+            Player = new ActorPlayer();
         }
 
         //  SubMethod of Constructor - Add Enemies
@@ -71,24 +71,24 @@ namespace Project2.App.Main {
         private async void AddEnemies() {
             HttpClient client = new HttpClient();
             string str = client.GetStringAsync("http://localhost:5201/getAllEnemies").Result;
-            Dictionary<string, GameActor> tempDict = JsonConvert.DeserializeObject<Dictionary<string, GameActor>>(str) ?? new Dictionary<string, GameActor>();
+            Dictionary<string, ActorEnemy> tempDict = JsonConvert.DeserializeObject<Dictionary<string, ActorEnemy>>(str) ?? new Dictionary<string, ActorEnemy>();
 
-            D_Enemies = new Dictionary<string, GameActor>();
+            D_Enemies = new Dictionary<string, ActorEnemy>();
             enemyKeys = new List<string>();
 
             if (tempDict.Count == 0) {
                 CreateEnemies();
 
-                var enemies = JsonContent.Create<Dictionary<string, GameActor>>(D_Enemies);
+                var enemies = JsonContent.Create<Dictionary<string, ActorEnemy>>(D_Enemies);
                 var postResponse = await client.PostAsync("http://localhost:5201/createAllEnemies", enemies);
                 //Console.WriteLine(JsonConvert.DeserializeObject<Dictionary<string, GameActor>>(await postResponse.Content.ReadAsStringAsync()));
             }
 
             else {
-                D_Enemies = new Dictionary<string, GameActor>();
+                D_Enemies = new Dictionary<string, ActorEnemy>();
                 enemyKeys = new List<string>();
                 foreach(var enemy in tempDict) {
-                    D_Enemies.Add(enemy.Key, new GameActor(enemy.Value));
+                    D_Enemies.Add(enemy.Key, new ActorEnemy(enemy.Value));
                     enemyKeys.Add(enemy.Key);
                 }
             }
@@ -97,44 +97,35 @@ namespace Project2.App.Main {
         //  SubMethod of Add Enemies - Create Enemies
         private void CreateEnemies() {
             enemyKeys.Add("Goblin");
-            D_Enemies.Add("Goblin", new GameActor { 
+            D_Enemies.Add("Goblin", new ActorEnemy { 
                 Name = "Goblin_False", 
                 Proficiency = 2,
                 Attributes = "8,14,10,10,8,8",
-                Class = "Enemy",
                 HealthDice = "2d6",
                 AttackUnarmed = "fists_strikes with their_Melee_0/0_1_bludgeoning",
                 AttackList = "scimitar_swings with their_Melee_0/1d6_0_slashing",
-                Level = 1,
-                Experience = $"0/{D_LevelReqs["1"]}",
                 DefenseArmor = "Leather Armor_11+DEX"
             });
 
             enemyKeys.Add("Orc");
-            D_Enemies.Add("Orc", new GameActor { 
+            D_Enemies.Add("Orc", new ActorEnemy { 
                 Name = "Orc_False", 
                 Proficiency = 2,
                 Attributes = "16,12,16,7,11,10",
-                Class = "Enemy",
                 HealthDice = "2d8",
                 AttackUnarmed = "fists_strikes with their_Melee_0/0_1_bludgeoning",
                 AttackList = "greataxe_swings with their_Melee_0/1d12_0_slashing",
-                Level = 1,
-                Experience = $"0/{D_LevelReqs["1"]}",
                 DefenseArmor = "Leather Armor_11+DEX"
             });
 
             enemyKeys.Add("Giant Spider");
-            D_Enemies.Add("Giant Spider", new GameActor { 
+            D_Enemies.Add("Giant Spider", new ActorEnemy { 
                 Name = "Giant Spider_False", 
                 Proficiency = 2,
                 Attributes = "14,16,12,2,11,4",
-                Class = "Enemy",
                 HealthDice = "4d10",
                 AttackUnarmed = "fangs_bites with their_Melee_0/0_1_bludgeoning",
                 AttackList = "",
-                Level = 1,
-                Experience = $"0/{D_LevelReqs["1"]}",
                 DefenseArmor = ""
             });
         }
@@ -150,12 +141,12 @@ namespace Project2.App.Main {
         /// Returns a random enemy from d_Enemies
         /// </summary>
         /// <returns></returns>
-        public GameActor GetEnemy() {
+        public ActorEnemy GetEnemy() {
             return D_Enemies[enemyKeys[refRand.Next(0, enemyKeys.Count)]];
         }
     
         //  MainMethod - Actor Level Up
-        public void ActorLevelUp(GameActor pActor) {
+        public void ActorLevelUp(ActorPlayer pActor) {
             pActor.Level++;
             pActor.ExpReq = D_LevelReqs[pActor.Level.ToString()];
 
