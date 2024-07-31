@@ -11,8 +11,8 @@ using Project2.Data;
 namespace Project2.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240730143408_Initial")]
-    partial class Initial
+    [Migration("20240731205804_ActorSplit")]
+    partial class ActorSplit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,7 +24,7 @@ namespace Project2.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Project2.Models.Actor.GameActor", b =>
+            modelBuilder.Entity("Project2.Models.Actor.ActorEnemy", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -32,11 +32,19 @@ namespace Project2.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Class")
+                    b.Property<string>("AttackList")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Experience")
+                    b.Property<string>("AttackUnarmed")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Attributes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DefenseArmor")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -44,8 +52,9 @@ namespace Project2.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Level")
-                        .HasColumnType("int");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Proficiency")
                         .HasColumnType("int");

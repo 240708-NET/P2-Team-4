@@ -5,7 +5,7 @@
 namespace Project2.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class ActorSplit : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,10 +16,12 @@ namespace Project2.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Class = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Attributes = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AttackUnarmed = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AttackList = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DefenseArmor = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     HealthDice = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Level = table.Column<int>(type: "int", nullable: false),
-                    Experience = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Proficiency = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
