@@ -14,8 +14,6 @@ namespace Project2.Models.Actor {
         public Dictionary<string, int> D_AttrMod { get; set; }
         public string Attributes { get; set; }
 
-        //  Class Variables
-        public string Class { get; set; }
 
         //  Combat Variables
         [NotMapped]
@@ -48,16 +46,6 @@ namespace Project2.Models.Actor {
         [NotMapped]
         public string HealthStr => $"{HealthCurr}/{HealthBase}";
 
-        //  Level Variables
-        public int Level { get; set; }
-        [NotMapped]
-        public int ExpCurr { get; set; }
-        [NotMapped]
-        public int ExpReq { get; set; }
-        [NotMapped]
-        public string ExpStr => $"{ExpCurr}/{ExpReq}";
-        public string Experience { get; set; }
-
         //  Name Variables
         public string Name { get; set; }
         [NotMapped]
@@ -78,9 +66,6 @@ namespace Project2.Models.Actor {
             D_AttrScr = new Dictionary<string, int>();
             D_AttrMod = new Dictionary<string, int>();
 
-            //  Setup Class
-            Class = "";
-
             //  Setup Combat
             AttackUnarmed = "";
             Atk_Unarmed = new GameAttack();
@@ -99,12 +84,6 @@ namespace Project2.Models.Actor {
             HealthDice = "";
             HealthBase = 0;
             HealthCurr = 0;
-
-            //  Setup Experience
-            Level = 1;
-            Experience = "0/300";
-            ExpCurr = 0;
-            ExpReq = 300;
 
             //  Setup Name
             Name = "";
@@ -156,9 +135,6 @@ namespace Project2.Models.Actor {
                     D_AttrMod["CHA"] = (D_AttrScr["CHA"] / 2) - 5;
                 }
             }
-
-            //  Setup Class
-            Class = "" + pActor.Class;
 
             //  Setup Combat
             AttackUnarmed = "" + pActor.AttackUnarmed;
@@ -243,14 +219,6 @@ namespace Project2.Models.Actor {
                 HealthBase = 0 + pActor.HealthBase;
             }
             HealthCurr = 0 + HealthBase;
-
-            //  Setup Experience
-            Level = pActor.Level;
-            Experience = "" + pActor.Experience;
-
-            int[] expArr = Array.ConvertAll(Experience.Split("/"), int.Parse);
-            ExpCurr = 0 + expArr[0];
-            ExpReq = 0 + expArr[1];
 
             //  Setup Name
             Name = "" + ((pActor.Name != null) ? pActor.Name : "");
@@ -404,11 +372,6 @@ namespace Project2.Models.Actor {
 
             Console.WriteLine($"Player restores 2 hp to {HealthCurr}");
             Console.WriteLine("");
-        }
-
-        //  MainMethod - Gain Experience
-        public void GainExperience(int pAmt) {
-            ExpCurr += pAmt;
         }
     }
 }

@@ -15,8 +15,8 @@ namespace Project2.App.Main {
         private string combatUI_Empty => $"+{new string(' ', 29)}+";
 
         //  Enemy Variables
-        private GameActor enemy;
-        public GameActor Enemy {
+        private ActorEnemy enemy;
+        public ActorEnemy Enemy {
             get { return enemy; }
             set {
                 enemy = value;
