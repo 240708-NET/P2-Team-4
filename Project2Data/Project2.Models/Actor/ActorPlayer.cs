@@ -1,11 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Project2.Models.User;
 
 namespace Project2.Models.Actor {
     public class ActorPlayer : GameActor {
         //Server Variable
-        [Required]
-        public string Name { get; set; }
+        
+        public int UserId { get; set;}
+        public UserPlayer user {get;set;}
         public int Score { get; set; }
         //  Class Variables
         public string Class { get; set; }
