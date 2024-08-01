@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Project2.Data;
 
@@ -10,9 +11,11 @@ using Project2.Data;
 namespace Project2.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240801210341_ItemsAndCharacters")]
+    partial class ItemsAndCharacters
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,9 +51,6 @@ namespace Project2.Data.Migrations
                     b.Property<string>("HealthDice")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -100,9 +100,6 @@ namespace Project2.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Level")
                         .HasColumnType("int");
 
@@ -116,12 +113,7 @@ namespace Project2.Data.Migrations
                     b.Property<int>("Score")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Players");
                 });
@@ -166,22 +158,6 @@ namespace Project2.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserPlayer");
-                });
-
-            modelBuilder.Entity("Project2.Models.Actor.ActorPlayer", b =>
-                {
-                    b.HasOne("Project2.Models.User.UserPlayer", "user")
-                        .WithMany("userPlayers")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("user");
-                });
-
-            modelBuilder.Entity("Project2.Models.User.UserPlayer", b =>
-                {
-                    b.Navigation("userPlayers");
                 });
 #pragma warning restore 612, 618
         }

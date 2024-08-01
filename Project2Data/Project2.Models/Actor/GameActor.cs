@@ -6,6 +6,8 @@ namespace Project2.Models.Actor {
         //  _Server Variables
         [Key]
         public int Id { get; set; }
+
+        public int ItemId{ get; set;}
         
         //  Attribute Variables
         [NotMapped]
