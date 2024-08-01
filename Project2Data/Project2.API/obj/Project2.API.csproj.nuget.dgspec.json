@@ -1,24 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\solod\\Revature\\SolomonHumna\\P2-Team-4\\Project2Data\\Project2.API\\Project2.API.csproj": {}
+    "D:\\Revature\\P2-Team-4\\Project2Data\\Project2.API\\Project2.API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\solod\\Revature\\SolomonHumna\\P2-Team-4\\Project2Data\\Project2.API\\Project2.API.csproj": {
+    "D:\\Revature\\P2-Team-4\\Project2Data\\Project2.API\\Project2.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\solod\\Revature\\SolomonHumna\\P2-Team-4\\Project2Data\\Project2.API\\Project2.API.csproj",
+        "projectUniqueName": "D:\\Revature\\P2-Team-4\\Project2Data\\Project2.API\\Project2.API.csproj",
         "projectName": "Project2.API",
-        "projectPath": "C:\\Users\\solod\\Revature\\SolomonHumna\\P2-Team-4\\Project2Data\\Project2.API\\Project2.API.csproj",
-        "packagesPath": "C:\\Users\\solod\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\solod\\Revature\\SolomonHumna\\P2-Team-4\\Project2Data\\Project2.API\\obj\\",
+        "projectPath": "D:\\Revature\\P2-Team-4\\Project2Data\\Project2.API\\Project2.API.csproj",
+        "packagesPath": "C:\\Users\\theep\\.nuget\\packages\\",
+        "outputPath": "D:\\Revature\\P2-Team-4\\Project2Data\\Project2.API\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\solod\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\theep\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -26,18 +22,17 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\solod\\Revature\\SolomonHumna\\P2-Team-4\\Project2Data\\Project2.Data\\Project2.Data.csproj": {
-                "projectPath": "C:\\Users\\solod\\Revature\\SolomonHumna\\P2-Team-4\\Project2Data\\Project2.Data\\Project2.Data.csproj"
+              "D:\\Revature\\P2-Team-4\\Project2Data\\Project2.Data\\Project2.Data.csproj": {
+                "projectPath": "D:\\Revature\\P2-Team-4\\Project2Data\\Project2.Data\\Project2.Data.csproj"
               },
-              "C:\\Users\\solod\\Revature\\SolomonHumna\\P2-Team-4\\Project2Data\\Project2.Models\\Project2.Models.csproj": {
-                "projectPath": "C:\\Users\\solod\\Revature\\SolomonHumna\\P2-Team-4\\Project2Data\\Project2.Models\\Project2.Models.csproj"
+              "D:\\Revature\\P2-Team-4\\Project2Data\\Project2.Models\\Project2.Models.csproj": {
+                "projectPath": "D:\\Revature\\P2-Team-4\\Project2Data\\Project2.Models\\Project2.Models.csproj"
               }
             }
           }
@@ -89,21 +84,17 @@
         }
       }
     },
-    "C:\\Users\\solod\\Revature\\SolomonHumna\\P2-Team-4\\Project2Data\\Project2.Data\\Project2.Data.csproj": {
+    "D:\\Revature\\P2-Team-4\\Project2Data\\Project2.Data\\Project2.Data.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\solod\\Revature\\SolomonHumna\\P2-Team-4\\Project2Data\\Project2.Data\\Project2.Data.csproj",
+        "projectUniqueName": "D:\\Revature\\P2-Team-4\\Project2Data\\Project2.Data\\Project2.Data.csproj",
         "projectName": "Project2.Data",
-        "projectPath": "C:\\Users\\solod\\Revature\\SolomonHumna\\P2-Team-4\\Project2Data\\Project2.Data\\Project2.Data.csproj",
-        "packagesPath": "C:\\Users\\solod\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\solod\\Revature\\SolomonHumna\\P2-Team-4\\Project2Data\\Project2.Data\\obj\\",
+        "projectPath": "D:\\Revature\\P2-Team-4\\Project2Data\\Project2.Data\\Project2.Data.csproj",
+        "packagesPath": "C:\\Users\\theep\\.nuget\\packages\\",
+        "outputPath": "D:\\Revature\\P2-Team-4\\Project2Data\\Project2.Data\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\solod\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\theep\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -111,15 +102,14 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\solod\\Revature\\SolomonHumna\\P2-Team-4\\Project2Data\\Project2.Models\\Project2.Models.csproj": {
-                "projectPath": "C:\\Users\\solod\\Revature\\SolomonHumna\\P2-Team-4\\Project2Data\\Project2.Models\\Project2.Models.csproj"
+              "D:\\Revature\\P2-Team-4\\Project2Data\\Project2.Models\\Project2.Models.csproj": {
+                "projectPath": "D:\\Revature\\P2-Team-4\\Project2Data\\Project2.Models\\Project2.Models.csproj"
               }
             }
           }
@@ -170,21 +160,17 @@
         }
       }
     },
-    "C:\\Users\\solod\\Revature\\SolomonHumna\\P2-Team-4\\Project2Data\\Project2.Models\\Project2.Models.csproj": {
+    "D:\\Revature\\P2-Team-4\\Project2Data\\Project2.Models\\Project2.Models.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\solod\\Revature\\SolomonHumna\\P2-Team-4\\Project2Data\\Project2.Models\\Project2.Models.csproj",
+        "projectUniqueName": "D:\\Revature\\P2-Team-4\\Project2Data\\Project2.Models\\Project2.Models.csproj",
         "projectName": "Project2.Models",
-        "projectPath": "C:\\Users\\solod\\Revature\\SolomonHumna\\P2-Team-4\\Project2Data\\Project2.Models\\Project2.Models.csproj",
-        "packagesPath": "C:\\Users\\solod\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\solod\\Revature\\SolomonHumna\\P2-Team-4\\Project2Data\\Project2.Models\\obj\\",
+        "projectPath": "D:\\Revature\\P2-Team-4\\Project2Data\\Project2.Models\\Project2.Models.csproj",
+        "packagesPath": "C:\\Users\\theep\\.nuget\\packages\\",
+        "outputPath": "D:\\Revature\\P2-Team-4\\Project2Data\\Project2.Models\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\solod\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\theep\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -192,7 +178,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {

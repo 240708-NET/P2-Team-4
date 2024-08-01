@@ -1,24 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\solod\\Revature\\SolomonHumna\\P2-Team-4\\Project2Data\\Project2.Models\\Project2.Models.csproj": {}
+    "D:\\Revature\\P2-Team-4\\Project2Data\\Project2.Models\\Project2.Models.csproj": {}
   },
   "projects": {
-    "C:\\Users\\solod\\Revature\\SolomonHumna\\P2-Team-4\\Project2Data\\Project2.Models\\Project2.Models.csproj": {
+    "D:\\Revature\\P2-Team-4\\Project2Data\\Project2.Models\\Project2.Models.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\solod\\Revature\\SolomonHumna\\P2-Team-4\\Project2Data\\Project2.Models\\Project2.Models.csproj",
+        "projectUniqueName": "D:\\Revature\\P2-Team-4\\Project2Data\\Project2.Models\\Project2.Models.csproj",
         "projectName": "Project2.Models",
-        "projectPath": "C:\\Users\\solod\\Revature\\SolomonHumna\\P2-Team-4\\Project2Data\\Project2.Models\\Project2.Models.csproj",
-        "packagesPath": "C:\\Users\\solod\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\solod\\Revature\\SolomonHumna\\P2-Team-4\\Project2Data\\Project2.Models\\obj\\",
+        "projectPath": "D:\\Revature\\P2-Team-4\\Project2Data\\Project2.Models\\Project2.Models.csproj",
+        "packagesPath": "C:\\Users\\theep\\.nuget\\packages\\",
+        "outputPath": "D:\\Revature\\P2-Team-4\\Project2Data\\Project2.Models\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\solod\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\theep\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -26,7 +22,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
