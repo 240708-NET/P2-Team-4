@@ -3,6 +3,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Project2.Models.Actor {
     public class ActorPlayer : GameActor {
+        //Server Variable
+        [Required]
+        public string Name { get; set; }
+        public int Score { get; set; }
         //  Class Variables
         public string Class { get; set; }
 

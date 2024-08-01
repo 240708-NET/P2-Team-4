@@ -7,5 +7,8 @@ namespace Project2.Data {
         
         public ActorEnemy? CreateEnemy(ActorEnemy pEnemy);
         public Dictionary<string, ActorEnemy> CreateAllEnemies(Dictionary<string, ActorEnemy> pEnemies);
+        public ActorPlayer? GetPlayer(ActorPlayer Player);
+        public ActorPlayer? CreatePlayer(ActorPlayer Player);
+        public Dictionary<string, ActorPlayer> GetAllPlayers();
     }
 }
