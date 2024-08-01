@@ -53,5 +53,30 @@ namespace Project2.Data {
 
             return GetAllEnemies();
         }
+         public ActorPlayer? GetPlayer(ActorPlayer Player) {
+            var found = from e in context.Players.ToList()
+                where e.Id == Player.Id
+                select e;
+
+            return found.FirstOrDefault();
+        }
+        public ActorPlayer? CreatePlayer(ActorPlayer Player) {
+            context.Add(Player);
+            context.SaveChanges();
+
+            return GetPlayer(Player);
+        }
+          public Dictionary<string, ActorPlayer> GetAllPlayers() {
+            Dictionary<string, ActorPlayer> result = new Dictionary<string, ActorPlayer>();
+
+            List<ActorPlayer> Players = context.Players.ToList();
+            //Console.WriteLine(enemies[0].ActorStr);
+            foreach(ActorPlayer player in Players) {
+                result.Add($"{player.Name.Split("_")[0]}", new ActorPlayer(player));
+            }
+
+            return result;
+        }
+
     }
 }

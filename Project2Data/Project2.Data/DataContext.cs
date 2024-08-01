@@ -4,6 +4,8 @@ using Project2.Models.Actor;
 namespace Project2.Data {
     public class DataContext : DbContext {
         public DbSet<ActorEnemy> Enemies => Set<ActorEnemy>();
+        public DbSet<ActorPlayer> Players => Set<ActorPlayer>();
+        
 
         //  Constructor
         public DataContext() {
