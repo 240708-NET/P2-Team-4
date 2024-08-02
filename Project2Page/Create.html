@@ -2,21 +2,116 @@
 <html>
 <head>
     <title>Document Title</title>
+    <style>
+        .dropbox {
+            width: 40px;
+            height: 20px;
+            padding: 5px;
+            border: 1px solid #292828;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
     <label for="charName">Character Name:</label>
     <input type="text" id="charName" name="charName"><br><br>
     <label for="roll">Roll Type:</label><br>
-    <input type="radio" id="roll1" name="rolls" value="roll1">
-    <label for="roll1">Roll 1</label><br>
-    <input type="radio" id="roll2" name="rolls" value="roll2">
-    <label for="roll2">Roll 2</label><br>
-    <input type="radio" id="roll3" name="rolls" value="roll3">
-    <label for="roll3">Roll 3</label><br>
+    <input type="radio" id="4D6D1" name="rolls" value="4D6D1">
+    <label for="4D6D1">4D6D1</label><br>
+    <input type="radio" id="3D6" name="rolls" value="3D6">
+    <label for="3D6">3D6</label><br>
+    <input type="radio" id="2D66" name="rolls" value="2D66">
+    <label for="2D66">2D6 + 6</label><br>
+    <button type="btnRoll">Roll for Attributes</button><br>
     <label for="attributes">Attributes:</label>
     <br>
+    <table>
+        <tr>
+            <th>Strength</th>
+            <th>Dexterity</th>
+            <th>Constitution</th>
+            <th>Intelligence</th>
+            <th>Wisdom</th>
+            <th>Charisma</th>
+        </tr>
+        <tr>
+            <td><div class="dropbox" 
+                ondrop="droppoint(event)" 
+                ondragover="allowDropOption(event)">
+            </div></td>
+            <td><div class="dropbox" 
+                ondrop="droppoint(event)" 
+                ondragover="allowDropOption(event)">
+            </div></td>
+            <td><div class="dropbox" 
+                ondrop="droppoint(event)" 
+                ondragover="allowDropOption(event)">
+            </div></td>
+            <td><div class="dropbox" 
+                ondrop="droppoint(event)" 
+                ondragover="allowDropOption(event)">
+            </div></td>
+            <td><div class="dropbox" 
+                ondrop="droppoint(event)" 
+                ondragover="allowDropOption(event)">
+            </div></td>
+    
+            <td><div class="dropbox" 
+                ondrop="droppoint(event)" 
+                ondragover="allowDropOption(event)">
+            </div></td>
+        </tr>
+        <tr>
+            <td><p id="stat1" 
+                draggable="true" 
+                ondragstart="dragpoint(event)"> 
+                stat1
+            </p></td>
+            <td><p id="stat2" 
+                draggable="true" 
+                ondragstart="dragpoint(event)"> 
+                stat2
+            </p></td>
+            <td><p id="stat3" 
+                draggable="true" 
+                ondragstart="dragpoint(event)"> 
+                stat3
+            </p></td>
+            <td><p id="stat4" 
+                draggable="true" 
+                ondragstart="dragpoint(event)"> 
+                stat4
+            </p></td>
+            <td><p id="stat5" 
+                draggable="true" 
+                ondragstart="dragpoint(event)"> 
+                stat5
+            </p></td>
+            <td><p id="stat6" 
+                draggable="true" 
+                ondragstart="dragpoint(event)"> 
+                stat6
+            </p></td>
+        </tr>
+    </table>   
+    <script>
+        function droppoint(event) {
+            event.preventDefault();
+            var data = event.dataTransfer.getData("text/plain");
+            event.target.appendChild(document.getElementById(data));
+        }
 
+        function allowDropOption(event) {
+            event.preventDefault();
+        }
 
+        function dragpoint(event) {
+            event.dataTransfer.setData("text/plain", event.target.id);
+        }
+    </script>
     <br>
     <label for="classes">Class</label><br>
     <input type="radio" id="class1" name="class" value="class1">
