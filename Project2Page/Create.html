@@ -1,8 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Document Title</title>
+    <link rel="stylesheet" href="DungeonStyle.css">
+    <title>Creator</title>
     <style>
+        .statRoll{
+            margin-left: auto;
+            margin-right: auto;
+        }
         .dropbox {
             width: 40px;
             height: 20px;
@@ -16,19 +21,25 @@
     </style>
 </head>
 <body>
+    <div class="grid-container">
+        <div class="header">
+            <h1>Game Name</h1>
+        </div>
+        <div class="left" style="background-color:#aaa;"></div>
+        <div class="middle" style="background-color:#bbb;">
     <label for="charName">Character Name:</label>
     <input type="text" id="charName" name="charName"><br><br>
     <label for="roll">Roll Type:</label><br>
     <input type="radio" id="4D6D1" name="rolls" value="4D6D1">
-    <label for="4D6D1">4D6D1</label><br>
+    <label for="4D6D1">4D6D1</label><br>
     <input type="radio" id="3D6" name="rolls" value="3D6">
-    <label for="3D6">3D6</label><br>
+    <label for="3D6">3D6</label><br>
     <input type="radio" id="2D66" name="rolls" value="2D66">
-    <label for="2D66">2D6 + 6</label><br>
+    <label for="2D66">2D6 + 6</label><br>
     <button type="btnRoll">Roll for Attributes</button><br>
     <label for="attributes">Attributes:</label>
     <br>
-    <table>
+    <table class="statRoll">
         <tr>
             <th>Strength</th>
             <th>Dexterity</th>
@@ -117,5 +128,11 @@
     <input type="radio" id="class1" name="class" value="class1">
     <label for="class1">Class 1</label><br>
     <button type="createCharButton">Create Character</button><br><br>
+</div>
+<div class="right" style="background-color:#aaa;"></div>
+<div class="footer">
+    
+</div>
+</div>
 </body>
 </html>
