@@ -69,8 +69,8 @@ namespace Project2.App.Main {
         /// Adds enemies to the d_Enemies dictionary and the key to enemyKeys
         /// </summary>
         private async void AddEnemies() {
-            HttpClient client = new HttpClient();
-            string str = client.GetStringAsync("http://localhost:5201/getAllEnemies").Result;
+            Console.WriteLine(RefMGame.Client.BaseAddress + "getAllEnemies");
+            string str = RefMGame.Client.GetStringAsync("getAllEnemies").Result;
             Dictionary<string, ActorEnemy> tempDict = JsonConvert.DeserializeObject<Dictionary<string, ActorEnemy>>(str) ?? new Dictionary<string, ActorEnemy>();
 
             D_Enemies = new Dictionary<string, ActorEnemy>();
@@ -80,7 +80,8 @@ namespace Project2.App.Main {
                 CreateEnemies();
 
                 var enemies = JsonContent.Create<Dictionary<string, ActorEnemy>>(D_Enemies);
-                var postResponse = await client.PostAsync("http://localhost:5201/createAllEnemies", enemies);
+                Console.WriteLine(RefMGame.Client.BaseAddress + "createAllEnemies");
+                var postResponse = await RefMGame.Client.PostAsync("createAllEnemies", enemies);
                 //Console.WriteLine(JsonConvert.DeserializeObject<Dictionary<string, GameActor>>(await postResponse.Content.ReadAsStringAsync()));
             }
 

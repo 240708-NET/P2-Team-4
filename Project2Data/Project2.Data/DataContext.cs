@@ -8,9 +8,7 @@ namespace Project2.Data {
         public DbSet<ActorEnemy> Enemies => Set<ActorEnemy>();
         public DbSet<ActorPlayer> Players => Set<ActorPlayer>();
         public DbSet<Item> Items => Set<Item>();
-        public DbSet<UserPlayer> UserPlayer => Set<UserPlayer>();
-
-        
+        public DbSet<UserPlayer> Users => Set<UserPlayer>();
 
         //  Constructor
         public DataContext() {
@@ -27,20 +25,20 @@ namespace Project2.Data {
             pDBCOptionsBuilder.UseSqlServer(File.ReadAllText("../Project2.Data/ConnectionString"));
         }
 
-        protected override void OnModelCreating(ModelBuilder PModelBuilder)
-        {
-            PModelBuilder.Entity<UserPlayer>().HasMany(e => e.userPlayers)
-            .WithOne(e => e.user)
+        protected override void OnModelCreating(ModelBuilder pModelBuilder) {
+            /*
+            pModelBuilder.Entity<UserPlayer>().HasMany(e => e.UserPlayers)
+            .WithOne(e => e.User)
             .HasForeignKey(e => e.UserId)
             .HasPrincipalKey(e => e.Id);
-        }
+            */
 
-        //  protected override void OnConfiguration(Builder IOptionBuilder)
-        // {
-        //     DBCOptionBuilder.EntityFrameworkCore<Player>().HasMany(e => e.GameActor)
-        //     .WithOne(e => Item)
-        //     .HasForeignKey(e => e.ItemId)
-        //     .HasPrincipalKey(e => e.Id);
-        // }
+            /*
+            pModelBuilder.Entity<ActorPlayer>().HasMany(e => e.GameActor)
+            .WithOne(e => Item)
+            .HasForeignKey(e => e.ItemId)
+            .HasPrincipalKey(e => e.Id);
+            */
+        }
     }
 }
