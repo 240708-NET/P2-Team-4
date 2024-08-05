@@ -62,6 +62,36 @@ namespace Project2.Data {
 
             return GetAllEnemies();
         }
+
+         // Update Enemy
+        public ActorEnemy? UpdateEnemy(int id, ActorEnemy updatedEnemy)
+        {
+            var existingEnemy = context.Enemies.FirstOrDefault(e => e.Id == id);
+            if (existingEnemy != null)
+            {
+                existingEnemy.Name = updatedEnemy.Name;
+                existingEnemy.HealthDice = updatedEnemy.HealthDice;
+                existingEnemy.HealthBase = updatedEnemy.HealthBase;
+                existingEnemy.HealthCurr = updatedEnemy.HealthCurr;
+                // Update other properties as necessary
+                context.SaveChanges();
+                return existingEnemy;
+            }
+            return null;
+        }
+
+        // Delete Enemy
+        public bool DeleteEnemy(int id)
+        {
+            var enemy = context.Enemies.FirstOrDefault(e => e.Id == id);
+            if (enemy != null)
+            {
+                context.Enemies.Remove(enemy);
+                context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
          
         //--------------------------------------------------
         //  Player Methods

@@ -30,6 +30,27 @@ namespace Project2.API.Controllers {
             return _Data.CreateAllEnemies(pEnemies);
         }
 
+       // Update Enemy
+        [HttpPut("/updateEnemy/{id}")]
+        public ActionResult<ActorEnemy> UpdateEnemy(int id, [FromBody] ActorEnemy updatedEnemy) {
+            var enemy = _Data.UpdateEnemy(id, updatedEnemy);
+            if (enemy == null) {
+                return NotFound();
+            }
+            return enemy;
+        }
+
+        // Delete Enemy
+        [HttpDelete("/deleteEnemy/{id}")]
+        public IActionResult DeleteEnemy(int id) {
+            var success = _Data.DeleteEnemy(id);
+            if (!success) {
+                return NotFound();
+            }
+            return NoContent();
+        }
+
+
         //  GetMethod - Get User By Name
         [HttpGet("/getUserByName/{pName}")]
         public UserPlayer? GetUserByName(string pName) {
