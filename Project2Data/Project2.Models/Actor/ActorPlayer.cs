@@ -9,6 +9,7 @@ namespace Project2.Models.Actor {
         public int UserId { get; set;}
         public UserPlayer user {get;set;}
         public int Score { get; set; }
+        
         //  Class Variables
         public string Class { get; set; }
 

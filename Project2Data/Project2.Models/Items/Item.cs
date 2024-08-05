@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Project2.Models.Actor;
+
 
 namespace Project2.Models.Items {
     public class Item 
@@ -11,6 +13,8 @@ namespace Project2.Models.Items {
         public string Type{get; set;}
 
         public string Description {get; set;}
+        public Inventory inventories {get;set;}
+        public List<GameActor> gameActorItems {get; } = new List<GameActor>();
 
         public Item(){
             Name = "";

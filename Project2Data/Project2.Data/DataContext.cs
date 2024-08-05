@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Project2.Models.Actor;
 using Project2.Models.Items;
 using Project2.Models.User;
+using Project2.Models.Combats;
+
 
 namespace Project2.Data {
     public class DataContext : DbContext {
@@ -29,10 +31,36 @@ namespace Project2.Data {
 
         protected override void OnModelCreating(ModelBuilder PModelBuilder)
         {
-            PModelBuilder.Entity<UserPlayer>().HasMany(e => e.userPlayers)
-            .WithOne(e => e.user)
-            .HasForeignKey(e => e.UserId)
-            .HasPrincipalKey(e => e.Id);
+            PModelBuilder.Entity<UserPlayer>()
+                .HasMany(e => e.userPlayers)
+                .WithOne(e => e.user)
+                .HasForeignKey(e => e.UserId)
+                .HasPrincipalKey(e => e.Id);
+
+            PModelBuilder.Entity<Item>()
+                .HasMany(e => e.gameActorItems)
+                .WithOne(e => e.item)
+                .HasForeignKey(e => e.ItemId)
+                .HasPrincipalKey(e => e.Id);
+
+            PModelBuilder.Entity<Inventory>()
+                .HasMany(e => e.InventoryItems)
+                .WithOne(e => e.inventories)
+                .HasForeignKey(e => e.Id)
+                .HasPrincipalKey(e => e.ItemId);
+
+            PModelBuilder.Entity<Combat>()
+                .HasOne(e => e.enemy)
+                .WithOne(e => e.combat)
+                .HasForeignKey<Combat>(e => e.ActorEnemyId);
+                //.HasPrincipalKey(e => e.Id);
+
+            PModelBuilder.Entity<Combat>()
+                .HasOne(e => e.player)
+                .WithOne(e => e.combat)
+                .HasForeignKey<Combat>(e => e.ActorEnemyId);
+                //.HasPrincipalKey(e => e.Id);*/
+
         }
 
         //  protected override void OnConfiguration(Builder IOptionBuilder)
