@@ -54,7 +54,7 @@ namespace Project2.App.Main {
             combatActive = true;
 
             //  Setup Enemy
-            enemy = new ActorEnemy(RefMGame.M_Actor.GetEnemy());
+            enemy = new ActorEnemy();
 
             enemy_ACLow = -999;
             enemy_ACHigh = 999;
