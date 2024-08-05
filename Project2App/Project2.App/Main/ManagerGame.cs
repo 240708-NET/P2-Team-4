@@ -28,7 +28,7 @@ namespace Project2.App.Main {
         public ManagerGame() {
             //  Setup ~Reference
             Rand = new Random();
-            Client = new HttpClient() { BaseAddress = new Uri("http://localhost:5201/") };
+            Client = new HttpClient() { BaseAddress = new Uri($"http://localhost:{Port}/") };
 
             //  Setup Managers
             M_Actor = new ManagerActor(this);
