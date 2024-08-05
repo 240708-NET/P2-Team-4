@@ -39,9 +39,9 @@ namespace Project2.API.Controllers {
 
         //  PostMethod - Create User
         [HttpPost("/createUser")]
-        public UserPlayer? CreateUser([FromBody] UserPlayer pUser){
+        public UserPlayer? CreateUser([FromBody] UserPlayer user) {
             Console.WriteLine("HttpPost : Create User");
-            return _Data.CreateUser(pUser);
+            return _Data.CreateUser(user);
         }
 
         //  PostMethod - Create Player
@@ -57,5 +57,58 @@ namespace Project2.API.Controllers {
             Console.WriteLine("HttpPut : Update Player");
             _Data.UpdatePlayer(pPlayer);
         }
+
+
+        // New Methods
+        // Get User By Id
+        [HttpGet("/getUserById/{id}")]
+        public UserPlayer? GetUserById(int id) {
+            Console.WriteLine($"HttpGet : Get User By Id ({id})");
+            return _Data.GetUserById(id);
+        }
+
+        // Get Player By Name
+        [HttpGet("/getPlayerByName/{name}")]
+        public ActorPlayer? GetPlayerByName(string name) {
+            Console.WriteLine($"HttpGet : Get Player By Name ({name})");
+            return _Data.GetPlayerByName(name);
+        }
+
+        // Get Player By Id
+        [HttpGet("/getPlayerById/{id}")]
+        public ActorPlayer? GetPlayerById(int id) {
+            Console.WriteLine($"HttpGet : Get Player By Id ({id})");
+            return _Data.GetPlayerById(id);
+        }
+
+
+
+       // New Endpoints
+        [HttpPost("createEmptyPlayer")]
+        public ActorPlayer? CreateEmptyPlayer([FromBody] int userId) {
+            Console.WriteLine("HttpPost : Create Empty Player");
+            return _Data.CreateEmptyPlayer(userId);
+        }
+
+        [HttpPost("createPlayerName")]
+        public ActorPlayer? CreatePlayerName([FromQuery] int playerId, [FromQuery] string name) {
+            Console.WriteLine("HttpPost : Create Player Name");
+            return _Data.CreatePlayerName(playerId, name);
+        }
+
+        [HttpPost("createPlayerAttributes")]
+        public ActorPlayer? CreatePlayerAttributes([FromQuery] int playerId, [FromBody] Dictionary<string, int> attributes) {
+            Console.WriteLine("HttpPost : Create Player Attributes");
+            return _Data.CreatePlayerAttributes(playerId, attributes);
+        }
+
+        [HttpPost("createPlayerClass")]
+        public ActorPlayer? CreatePlayerClass([FromQuery] int playerId, [FromQuery] string className) {
+            Console.WriteLine("HttpPost : Create Player Class");
+            return _Data.CreatePlayerClass(playerId, className);
+        }
+
+      
+
     }
 }
