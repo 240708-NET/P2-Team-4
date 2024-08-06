@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Project2.Models.Items;
+using Project2.Models.Combats;
 
 namespace Project2.Models.Actor {
     public class GameActor {
@@ -8,6 +10,12 @@ namespace Project2.Models.Actor {
         public int Id { get; set; }
 
         public int ItemId{ get; set;}
+        //public int InventoryId{ get; set;}
+
+        // public Item item {get;set;}
+        public Combat? combat{get; set;} 
+
+        
         
         //  Attribute Variables
         [NotMapped]

@@ -1,12 +1,15 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Project2.Models.User;
+using Project2.Models.Items;
 
 namespace Project2.Models.Actor {
     public class ActorPlayer : GameActor {
-        //  _Server Variables
-        public int UserId { get; set; }
-        //public UserPlayer User { get; set; }
+        //Server Variable
+        public int UserId { get; set;}
+        public UserPlayer user {get;set;}
+        public int Score { get; set; }
+        public Inventory inventories {get; set;}
 
         //  Class Variables
         public string Class { get; set; }
