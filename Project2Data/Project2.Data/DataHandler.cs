@@ -62,6 +62,36 @@ namespace Project2.Data {
 
             return GetAllEnemies();
         }
+
+         // Update Enemy
+        public ActorEnemy? UpdateEnemy(int id, ActorEnemy updatedEnemy)
+        {
+            var existingEnemy = context.Enemies.FirstOrDefault(e => e.Id == id);
+            if (existingEnemy != null)
+            {
+                existingEnemy.Name = updatedEnemy.Name;
+                existingEnemy.HealthDice = updatedEnemy.HealthDice;
+                existingEnemy.HealthBase = updatedEnemy.HealthBase;
+                existingEnemy.HealthCurr = updatedEnemy.HealthCurr;
+                // Update other properties as necessary
+                context.SaveChanges();
+                return existingEnemy;
+            }
+            return null;
+        }
+
+        // Delete Enemy
+        public bool DeleteEnemy(int id)
+        {
+            var enemy = context.Enemies.FirstOrDefault(e => e.Id == id);
+            if (enemy != null)
+            {
+                context.Enemies.Remove(enemy);
+                context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
          
         //--------------------------------------------------
         //  Player Methods
@@ -152,13 +182,76 @@ namespace Project2.Data {
             return found.FirstOrDefault();
         }
 
-        //  PostMethod -  Create User
-        public UserPlayer? CreateUser(UserPlayer pUser) {
-            Console.WriteLine("-Adding user: " + pUser.Name);
-            context.Add(pUser);
+        // -  Create User
+            public UserPlayer? CreateUser(UserPlayer user) {
+            var existingUser = context.Users.FirstOrDefault(u => u.Name == user.Name);
+            if (existingUser != null) {
+                Console.WriteLine($"-User {user.Name} already exists");
+                return existingUser;
+            }
+
+            
+            user.Id = 0;
+            Console.WriteLine("-Adding new user: " + user.Name);
+            context.Add(user);
             context.SaveChanges();
 
-            return GetUser(pUser);
+            return user;
         }
+
+         // New Methods for user
+        public UserPlayer? GetUserById(int id) {
+            return context.Users.FirstOrDefault(u => u.Id == id);
+        }
+
+        public ActorPlayer? GetPlayerByName(string name) {
+            return context.Players.FirstOrDefault(p => p.Name == name);
+        }
+
+        public ActorPlayer? GetPlayerById(int id) {
+            return context.Players.FirstOrDefault(p => p.Id == id);
+        }
+
+
+         // New Methods for player
+        public ActorPlayer? CreateEmptyPlayer(int userId) {
+            var newPlayer = new ActorPlayer { UserId = userId };
+            context.Add(newPlayer);
+            context.SaveChanges();
+            return newPlayer;
+        }
+
+        public ActorPlayer? CreatePlayerName(int playerId, string name) {
+            var player = context.Players.FirstOrDefault(p => p.Id == playerId);
+            if (player != null) {
+                player.Name = name;
+                context.SaveChanges();
+            }
+            return player;
+        }
+
+        public ActorPlayer? CreatePlayerAttributes(int playerId, Dictionary<string, int> attributes) {
+            var player = context.Players.FirstOrDefault(p => p.Id == playerId);
+            if (player != null) {
+                player.D_AttrScr = attributes;
+                context.SaveChanges();
+            }
+            return player;
+        }
+
+        public ActorPlayer? CreatePlayerClass(int playerId, string className) {
+            var player = context.Players.FirstOrDefault(p => p.Id == playerId);
+            if (player != null) {
+                player.Class = className;
+                context.SaveChanges();
+            }
+            return player;
+        }
+
+      
+
+
+
+
     }
 }
