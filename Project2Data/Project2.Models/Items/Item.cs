@@ -11,10 +11,13 @@ namespace Project2.Models.Items {
         public string Name {get; set;}
 
         public string Type{get; set;}
-
+        
         public string Description {get; set;}
-        public Inventory inventories {get;set;}
-        public List<GameActor> gameActorItems {get; } = new List<GameActor>();
+
+        public int InventoryId{get; set;}
+        public Inventory Inventories {get;set;}
+
+        //public List<GameActor> gameActorItems {get; } = new List<GameActor>();
 
         public Item(){
             Name = "";

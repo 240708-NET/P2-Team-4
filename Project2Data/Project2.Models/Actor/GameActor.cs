@@ -10,8 +10,9 @@ namespace Project2.Models.Actor {
         public int Id { get; set; }
 
         public int ItemId{ get; set;}
-        public int InventoryId{ get; set;}
-        public Item item {get;set;}
+        //public int InventoryId{ get; set;}
+
+        // public Item item {get;set;}
         public Combat? combat{get; set;} 
 
         

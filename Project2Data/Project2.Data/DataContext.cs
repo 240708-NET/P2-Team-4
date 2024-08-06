@@ -11,6 +11,9 @@ namespace Project2.Data {
         public DbSet<ActorPlayer> Players => Set<ActorPlayer>();
         public DbSet<Item> Items => Set<Item>();
         public DbSet<UserPlayer> UserPlayer => Set<UserPlayer>();
+        public DbSet<Inventory> Inventories => Set<Inventory>();
+        public DbSet<Combat> Combats => Set<Combat>();
+
 
         
 
@@ -31,44 +34,42 @@ namespace Project2.Data {
 
         protected override void OnModelCreating(ModelBuilder PModelBuilder)
         {
+            //One Player to many characters (ActorPlayers)
             PModelBuilder.Entity<UserPlayer>()
                 .HasMany(e => e.userPlayers)
                 .WithOne(e => e.user)
                 .HasForeignKey(e => e.UserId)
                 .HasPrincipalKey(e => e.Id);
 
-            PModelBuilder.Entity<Item>()
-                .HasMany(e => e.gameActorItems)
-                .WithOne(e => e.item)
-                .HasForeignKey(e => e.ItemId)
-                .HasPrincipalKey(e => e.Id);
+            //1 character to 1 inventoryID
+            PModelBuilder.Entity<Inventory>()
+                .HasOne(e => e.player)
+                .WithOne(e => e.inventories)
+                .HasForeignKey<Inventory>(e => e.ActorPlayerId);
 
+            //One Inventory to many Items
             PModelBuilder.Entity<Inventory>()
                 .HasMany(e => e.InventoryItems)
-                .WithOne(e => e.inventories)
-                .HasForeignKey(e => e.Id)
-                .HasPrincipalKey(e => e.ItemId);
+                .WithOne(e => e.Inventories)
+                .HasForeignKey(e => e.InventoryId)
+                .HasPrincipalKey(e => e.Id);
 
+            //One Combat to one enemy
             PModelBuilder.Entity<Combat>()
                 .HasOne(e => e.enemy)
                 .WithOne(e => e.combat)
                 .HasForeignKey<Combat>(e => e.ActorEnemyId);
                 //.HasPrincipalKey(e => e.Id);
 
+            //One Combat to one player (character)
             PModelBuilder.Entity<Combat>()
                 .HasOne(e => e.player)
                 .WithOne(e => e.combat)
-                .HasForeignKey<Combat>(e => e.ActorEnemyId);
+                .HasForeignKey<Combat>(e => e.ActorPlayerId);
                 //.HasPrincipalKey(e => e.Id);*/
 
         }
 
-        //  protected override void OnConfiguration(Builder IOptionBuilder)
-        // {
-        //     DBCOptionBuilder.EntityFrameworkCore<Player>().HasMany(e => e.GameActor)
-        //     .WithOne(e => Item)
-        //     .HasForeignKey(e => e.ItemId)
-        //     .HasPrincipalKey(e => e.Id);
-        // }
+       
     }
 }
