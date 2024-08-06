@@ -83,5 +83,10 @@ namespace Project2.Models.Actor {
 
             return damage;
         }
+
+        //  MainMethod - To String
+        public override string ToString() {
+            return $"{Attack_Name}_{Attack_Action}_{Attack_Type}_{Attack_Mod}/{Attack_Damages[0]}";
+        }
     }
 }

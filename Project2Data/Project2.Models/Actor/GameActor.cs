@@ -176,7 +176,7 @@ namespace Project2.Models.Actor {
             }
 
             //  Setup Defense
-            Def_UnarmoredAC = 0 + pActor.Def_UnarmoredAC;
+            Def_UnarmoredAC = 10 + D_AttrMod["DEX"];
 
             DefenseArmor = "" + pActor.DefenseArmor;
             Def_ArmoredName = "";

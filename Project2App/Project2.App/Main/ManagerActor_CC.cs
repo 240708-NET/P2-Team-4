@@ -1,5 +1,10 @@
 using System.IO;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Text.Json;
+using Newtonsoft.Json;
 using Project2.Models.Actor;
+using Project2.Models.User;
 
 namespace Project2.App.Main {
     public class ManagerActor_CC {
@@ -74,6 +79,8 @@ namespace Project2.App.Main {
                 ["WIS"] = (attributeNum[4] / 2) - 5,
                 ["CHA"] = (attributeNum[5] / 2) - 5,
             };
+
+            player.Attributes = $"{attributeNum[0]},{attributeNum[1]},{attributeNum[2]},{attributeNum[3]},{attributeNum[4]},{attributeNum[5]}";
 
             //  Setup Defense
             player.Def_UnarmoredAC = 10 + player.D_AttrMod["DEX"];
@@ -364,14 +371,16 @@ namespace Project2.App.Main {
             Console.WriteLine("");
         }
     
-        private void CC_Combat() {
+        private async void CC_Combat() {
             //  Setup Unarmed
-            player.Atk_Unarmed = new GameAttack("fists", "punches with", "Melee", 0, "0_1_bludgeoning");
+            player.Atk_Unarmed = new GameAttack("fists", "punches with their", "Melee", 0, "0_1_bludgeoning");
+            player.AttackUnarmed += "fists_punches with their_Melee_0/0_1_bludgeoning";
             refMGame.WriteLine("Giving player an unarmed melee attack called 'fists' with 1 bludgeoning damage", 25);
 
             //  Setup Combat
             player.Atk_List = new List<GameAttack>();
-            player.Atk_List.Add(new GameAttack("longsword", "swings with", "Melee", 0, "1d8_0_slashing"));
+            player.Atk_List.Add(new GameAttack("longsword", "swings with their", "Melee", 0, "1d8_0_slashing"));
+            player.AttackList += "longsword_swings with their_Melee_0/1d8_0_slashing";
             refMGame.WriteLine("Giving player a melee attack called 'longsword' with 1d8 slashing damage", 25);
             Console.WriteLine("");
 
@@ -380,6 +389,24 @@ namespace Project2.App.Main {
             player.Def_ArmoredAC = 14 + ((player.D_AttrMod["DEX"] > 2) ? 2 : player.D_AttrMod["DEX"]);
             refMGame.WriteLine($"Giving player a breastplate with 14{((player.D_AttrMod["DEX"] > 0) ? "+" : "")}{player.D_AttrMod["DEX"]}({player.Def_ArmoredAC}) AC", 25);
             Console.WriteLine("");
+
+            string userStr = refMGame.Client.GetStringAsync("getUserByName/BobUser").Result;
+            UserPlayer user = JsonConvert.DeserializeObject<UserPlayer>(userStr);
+            Console.WriteLine(user == null);
+
+            if (user == null) {
+                var userJson = JsonContent.Create<UserPlayer>(new UserPlayer() { Name = "BobUser", });
+                var userResponse = await refMGame.Client.PostAsync("createUser", userJson);
+            }
+
+            userStr = refMGame.Client.GetStringAsync("getUserByName/BobUser").Result;
+            player.UserId = JsonConvert.DeserializeObject<UserPlayer>(userStr).Id;
+            //player.User = user;
+
+            var playerJson = JsonContent.Create<ActorPlayer>(player);
+            Console.WriteLine(refMGame.Client.BaseAddress + "createPlayer");
+            var postResponse = await refMGame.Client.PostAsync("createPlayer", playerJson);
+            //Console.WriteLine(postResponse.Content.ReadAsStringAsync().Result);
         }
     }
 }

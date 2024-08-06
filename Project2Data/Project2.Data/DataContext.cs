@@ -13,10 +13,7 @@ namespace Project2.Data {
         public DbSet<UserPlayer> UserPlayer => Set<UserPlayer>();
         public DbSet<Inventory> Inventories => Set<Inventory>();
         public DbSet<Combat> Combats => Set<Combat>();
-
-
-        
-
+      
         //  Constructor
         public DataContext() {
 
@@ -31,9 +28,8 @@ namespace Project2.Data {
         protected override void OnConfiguring(DbContextOptionsBuilder pDBCOptionsBuilder) {
             pDBCOptionsBuilder.UseSqlServer(File.ReadAllText("../Project2.Data/ConnectionString"));
         }
-
-        protected override void OnModelCreating(ModelBuilder PModelBuilder)
-        {
+      
+        protected override void OnModelCreating(ModelBuilder PModelBuilder) {
             //One Player to many characters (ActorPlayers)
             PModelBuilder.Entity<UserPlayer>()
                 .HasMany(e => e.userPlayers)
@@ -69,7 +65,5 @@ namespace Project2.Data {
                 //.HasPrincipalKey(e => e.Id);*/
 
         }
-
-       
     }
 }

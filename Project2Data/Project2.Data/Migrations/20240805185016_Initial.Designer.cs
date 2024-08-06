@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Project2.Data;
 
@@ -11,9 +12,11 @@ using Project2.Data;
 namespace Project2.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240805185016_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -131,53 +134,6 @@ namespace Project2.Data.Migrations
                     b.ToTable("Players");
                 });
 
-            modelBuilder.Entity("Project2.Models.Combats.Combat", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ActorEnemyId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ActorPlayerId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ActorEnemyId")
-                        .IsUnique();
-
-                    b.HasIndex("ActorPlayerId")
-                        .IsUnique();
-
-                    b.ToTable("Combats");
-                });
-
-            modelBuilder.Entity("Project2.Models.Items.Inventory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ActorPlayerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ActorPlayerId")
-                        .IsUnique();
-
-                    b.ToTable("Inventories");
-                });
-
             modelBuilder.Entity("Project2.Models.Items.Item", b =>
                 {
                     b.Property<int>("Id")
@@ -190,9 +146,6 @@ namespace Project2.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("InventoryId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -202,8 +155,6 @@ namespace Project2.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("InventoryId");
 
                     b.ToTable("Items");
                 });
@@ -230,65 +181,6 @@ namespace Project2.Data.Migrations
                     b.HasOne("Project2.Models.User.UserPlayer", null)
                         .WithMany("UserPlayers")
                         .HasForeignKey("UserPlayerId");
-                });
-
-            modelBuilder.Entity("Project2.Models.Combats.Combat", b =>
-                {
-                    b.HasOne("Project2.Models.Actor.ActorEnemy", "enemy")
-                        .WithOne("combat")
-                        .HasForeignKey("Project2.Models.Combats.Combat", "ActorEnemyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Project2.Models.Actor.ActorPlayer", "player")
-                        .WithOne("combat")
-                        .HasForeignKey("Project2.Models.Combats.Combat", "ActorPlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("enemy");
-
-                    b.Navigation("player");
-                });
-
-            modelBuilder.Entity("Project2.Models.Items.Inventory", b =>
-                {
-                    b.HasOne("Project2.Models.Actor.ActorPlayer", "player")
-                        .WithOne("inventories")
-                        .HasForeignKey("Project2.Models.Items.Inventory", "ActorPlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("player");
-                });
-
-            modelBuilder.Entity("Project2.Models.Items.Item", b =>
-                {
-                    b.HasOne("Project2.Models.Items.Inventory", "Inventories")
-                        .WithMany("InventoryItems")
-                        .HasForeignKey("InventoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Inventories");
-                });
-
-            modelBuilder.Entity("Project2.Models.Actor.ActorEnemy", b =>
-                {
-                    b.Navigation("combat");
-                });
-
-            modelBuilder.Entity("Project2.Models.Actor.ActorPlayer", b =>
-                {
-                    b.Navigation("combat");
-
-                    b.Navigation("inventories")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Project2.Models.Items.Inventory", b =>
-                {
-                    b.Navigation("InventoryItems");
                 });
 
             modelBuilder.Entity("Project2.Models.User.UserPlayer", b =>

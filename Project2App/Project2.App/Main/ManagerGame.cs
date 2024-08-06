@@ -1,9 +1,17 @@
+using System;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Text.Json;
+using Newtonsoft.Json;
 using Project2.Models.Actor;
+using Project2.Models.User;
 
 namespace Project2.App.Main {
     public class ManagerGame {
         //  ~Reference Variables
         public Random Rand;
+        public string Port = "5201";
+        public HttpClient Client;
 
         //  End Variables
         public bool Force_Quit;
@@ -20,6 +28,7 @@ namespace Project2.App.Main {
         public ManagerGame() {
             //  Setup ~Reference
             Rand = new Random();
+            Client = new HttpClient() { BaseAddress = new Uri($"http://localhost:{Port}/") };
 
             //  Setup Managers
             M_Actor = new ManagerActor(this);
@@ -47,7 +56,7 @@ namespace Project2.App.Main {
         public void WriteText(string pText, int pSleep) {
             for(int i = 0; i < pText.Length; i++) {
                 Console.Write(pText.Substring(i, 1));
-                Thread.Sleep(pSleep);
+                //Thread.Sleep(pSleep);
             }
         }
 
