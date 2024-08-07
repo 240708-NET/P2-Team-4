@@ -160,7 +160,7 @@ namespace Project2.Data {
         //--------------------------------------------------
         //  GetMethod - Get User
         public UserPlayer? GetUser(UserPlayer pUser) {
-            var found = from e in context.Users.ToList()
+            var found = from e in context.UserPlayer.ToList()
                 where e.Id == pUser.Id
                 select e;
 
@@ -169,7 +169,7 @@ namespace Project2.Data {
 
         //  GetMethod - Get User By Name
         public UserPlayer? GetUserByName(string pName) {
-            var found = from e in context.Users.ToList()
+            var found = from e in context.UserPlayer.ToList()
                 where e.Name == pName
                 select e;
 
@@ -184,7 +184,7 @@ namespace Project2.Data {
 
         // -  Create User
             public UserPlayer? CreateUser(UserPlayer user) {
-            var existingUser = context.Users.FirstOrDefault(u => u.Name == user.Name);
+            var existingUser = context.UserPlayer.FirstOrDefault(u => u.Name == user.Name);
             if (existingUser != null) {
                 Console.WriteLine($"-User {user.Name} already exists");
                 return existingUser;
@@ -201,7 +201,7 @@ namespace Project2.Data {
 
          // New Methods for user
         public UserPlayer? GetUserById(int id) {
-            return context.Users.FirstOrDefault(u => u.Id == id);
+            return context.UserPlayer.FirstOrDefault(u => u.Id == id);
         }
 
         public ActorPlayer? GetPlayerByName(string name) {

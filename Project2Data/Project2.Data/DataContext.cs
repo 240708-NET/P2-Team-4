@@ -31,11 +31,12 @@ namespace Project2.Data {
       
         protected override void OnModelCreating(ModelBuilder PModelBuilder) {
             //One Player to many characters (ActorPlayers)
-            PModelBuilder.Entity<UserPlayer>()
-                .HasMany(e => e.userPlayers)
-                .WithOne(e => e.user)
-                .HasForeignKey(e => e.UserId)
-                .HasPrincipalKey(e => e.Id);
+                PModelBuilder.Entity<UserPlayer>()
+                .HasMany(up => up.UserPlayers) 
+                .WithOne(ap => ap.user) 
+                .HasForeignKey(ap => ap.UserId)
+                .HasPrincipalKey(up => up.Id);
+
 
             //1 character to 1 inventoryID
             PModelBuilder.Entity<Inventory>()
