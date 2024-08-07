@@ -25,7 +25,7 @@ namespace Project2.Models.Actor {
         public string Experience { get; set; }
 
         //  Score Variables
-        public int Score { get; set; }
+        //public int Score { get; set; }
 
         //  Default Constructor
         public ActorPlayer() : base() {
