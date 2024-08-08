@@ -50,9 +50,8 @@ namespace Project2.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ItemId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -118,15 +117,12 @@ namespace Project2.Data.Migrations
                     b.Property<int>("Score")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UserPlayerId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserPlayerId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Players");
                 });
@@ -227,9 +223,11 @@ namespace Project2.Data.Migrations
 
             modelBuilder.Entity("Project2.Models.Actor.ActorPlayer", b =>
                 {
-                    b.HasOne("Project2.Models.User.UserPlayer", null)
-                        .WithMany("UserPlayers")
-                        .HasForeignKey("UserPlayerId");
+                    b.HasOne("Project2.Models.User.UserPlayer", "User")
+                        .WithMany("Players")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Project2.Models.Combats.Combat", b =>
@@ -254,7 +252,7 @@ namespace Project2.Data.Migrations
             modelBuilder.Entity("Project2.Models.Items.Inventory", b =>
                 {
                     b.HasOne("Project2.Models.Actor.ActorPlayer", "player")
-                        .WithOne("inventories")
+                        .WithOne("PlayerInventory")
                         .HasForeignKey("Project2.Models.Items.Inventory", "ActorPlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -280,10 +278,9 @@ namespace Project2.Data.Migrations
 
             modelBuilder.Entity("Project2.Models.Actor.ActorPlayer", b =>
                 {
-                    b.Navigation("combat");
+                    b.Navigation("PlayerInventory");
 
-                    b.Navigation("inventories")
-                        .IsRequired();
+                    b.Navigation("combat");
                 });
 
             modelBuilder.Entity("Project2.Models.Items.Inventory", b =>
@@ -293,7 +290,7 @@ namespace Project2.Data.Migrations
 
             modelBuilder.Entity("Project2.Models.User.UserPlayer", b =>
                 {
-                    b.Navigation("UserPlayers");
+                    b.Navigation("Players");
                 });
 #pragma warning restore 612, 618
         }

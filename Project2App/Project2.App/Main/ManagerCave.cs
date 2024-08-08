@@ -47,6 +47,9 @@ namespace Project2.App.Main {
             Console.ReadLine();
 
             refMActor.CharacterCreation();
+            while(player == null) {
+                Thread.Sleep(400);
+            }
         }
 
         //  MainMethod - Explore Area
