@@ -13,30 +13,37 @@ namespace Project2.App.Main {
         private ManagerGame refMGame => RefMActor.RefMGame;
         private Random refRand => refMGame.Rand;
 
-        //  Player Variables
-        private ActorPlayer player;
-
         //  Constructor
         public ManagerActor_CC(ManagerActor pRef) {
             //  Setup ~Reference
             RefMActor = pRef;
-
-            // Setup Player
-            player = new ActorPlayer();
         }
 
         //  MainMethod - Character Creation
-        public ActorPlayer CharacterCreation() {
-            CC_Name();
-            CC_Attribute();
-            CC_Class();
-            CC_Combat();
+        public void CharacterCreation() {
 
-            return player;
+            CC_Initial();
+
+        }
+
+        private async void CC_Initial() {
+            string userStr = refMGame.Client.GetStringAsync("getUserByName/BobUser").Result;
+            UserPlayer? user = JsonConvert.DeserializeObject<UserPlayer>(userStr);
+
+            if (user == null) {
+                var userResponse = await refMGame.Client.PostAsync("createUser/BobUser", null);
+
+                while((userStr = refMGame.Client.GetStringAsync("getUserByName/BobUser").Result) == "") {
+                    Thread.Sleep(400);
+                }
+                user = JsonConvert.DeserializeObject<UserPlayer>(userStr);
+            }
+
+            CC_Name(user);
         }
 
         //  SubMethod of CharacterCreation - Character Creation Name
-        private void CC_Name() {
+        private async void CC_Name(UserPlayer pUser) {
             bool nameValid = false;
             string name = "";
 
@@ -51,42 +58,23 @@ namespace Project2.App.Main {
                 }
             }
 
-            player.Name = name;
-            player.Proper = true;
-            player.Article = "";
+            string playerStr = refMGame.Client.GetStringAsync($"getPlayerByName/{pUser.Id}/{name}").Result;
+            ActorPlayer? player = JsonConvert.DeserializeObject<ActorPlayer>(playerStr);
+
+            if (player == null) {
+                var playerResponse = await refMGame.Client.PostAsync($"createEmptyPlayer/{pUser.Id}/{name}", null);
+
+                while((playerStr = refMGame.Client.GetStringAsync($"getPlayerByName/{pUser.Id}/{name}").Result) == "") {
+                    Thread.Sleep(400);
+                }
+                player = JsonConvert.DeserializeObject<ActorPlayer>(playerStr);
+            }
+
+            CC_Attribute(pUser.Id, player.Id);
         }
 
         //  SubMethod of CharacterCreation - Character Creation Attribute
-        private void CC_Attribute() {
-            //  Roll attributes
-            List<int> attributePool = CCAttr_Roll();
-            List<int> attributeNum = CCAttr_Assign(attributePool);
-
-            player.D_AttrScr = new Dictionary<string, int>() {
-                ["STR"] = attributeNum[0],
-                ["DEX"] = attributeNum[1],
-                ["CON"] = attributeNum[2],
-                ["INT"] = attributeNum[3],
-                ["WIS"] = attributeNum[4],
-                ["CHA"] = attributeNum[5],
-            };
-
-            player.D_AttrMod = new Dictionary<string, int>() {
-                ["STR"] = (attributeNum[0] / 2) - 5,
-                ["DEX"] = (attributeNum[1] / 2) - 5,
-                ["CON"] = (attributeNum[2] / 2) - 5,
-                ["INT"] = (attributeNum[3] / 2) - 5,
-                ["WIS"] = (attributeNum[4] / 2) - 5,
-                ["CHA"] = (attributeNum[5] / 2) - 5,
-            };
-
-            player.Attributes = $"{attributeNum[0]},{attributeNum[1]},{attributeNum[2]},{attributeNum[3]},{attributeNum[4]},{attributeNum[5]}";
-
-            //  Setup Defense
-            player.Def_UnarmoredAC = 10 + player.D_AttrMod["DEX"];
-        }
-
-        private List<int> CCAttr_Roll() {
+        private async void CC_Attribute(int pUserId, int pId) {
             bool methodValid = false;
             string rollMethod = "";
 
@@ -136,73 +124,24 @@ namespace Project2.App.Main {
             Thread.Sleep(500);
 
             //  Rolling attributes
-            List<int> attributePool = new List<int>();
-            List<int> rolls = new List<int>();
-            int total = 0;
-
-            for(int i = 0; i < 6; i++) {
-                refMGame.WriteText($"Rolling {(i+1)}: ", 75);
-                rolls.Clear();
-
-                switch(rollMethod) {
-                    //  Roll 4d6, drop lowest
-                    case "4d6d1":
-                        //  Roll 4d6
-                        for(int x = 0; x < 4; x++) {
-                            int roll = refRand.Next(0, 6)+1;
-                            rolls.Add(roll);
-
-                            refMGame.WriteText((roll + ((x < 3) ? ", " : "")), 75);
-                        }
-
-                        //  Drop lowest
-                        rolls.Sort();
-                        rolls.RemoveAt(0);
-                        total = rolls.Sum();
-                        break;
-
-                    //  Roll 3d6
-                    case "3d6":
-                        //  Roll 3d6
-                        for(int x = 0; x < 3; x++) {
-                            int roll = refRand.Next(0, 6)+1;
-                            rolls.Add(roll);
-
-                            refMGame.WriteText((roll + ((x < 2) ? ", " : "")), 75);
-                        }
-
-                        total = rolls.Sum();
-                        break;
-
-                    // Roll 2d6, add 6
-                    case "2d6+6":
-                        //  Roll 2d6
-                        for(int x = 0; x < 2; x++) {
-                            int roll = refRand.Next(0, 6)+1;
-                            rolls.Add(roll);
-
-                            refMGame.WriteText((roll + ((x < 2) ? ", " : "")), 75);
-                        }
-                        refMGame.WriteText("6", 75);
-
-                        //  Add 6
-                        rolls.Add(6);
-                        total = rolls.Sum();
-                        break;
-                }
-
-                //  Add to attribute pool
-                attributePool.Add(total);
-                refMGame.WriteLine($", Total {total}{CCAttr_DisplayMod(total)}", 75);
-                
-                Console.WriteLine("");
-                Thread.Sleep(1000);
-            }
-
+            Console.WriteLine($"createAttributePool/{rollMethod}");
+            string attrStr = refMGame.Client.GetStringAsync($"createAttributePool/{rollMethod}").Result;
+            List<int> attributePool = JsonConvert.DeserializeObject<List<int>>(attrStr);
             attributePool.Sort();
             attributePool.Reverse();
 
-            return attributePool;
+            List<int> attributeNum = CCAttr_Assign(attributePool);
+
+            string attributes = $"{attributeNum[0]},{attributeNum[1]},{attributeNum[2]},{attributeNum[3]},{attributeNum[4]},{attributeNum[5]}";
+            Console.WriteLine(attributes);
+            var attrResponse = await refMGame.Client.PostAsync($"createPlayerAttributes/{pId}/{attributes}", null);
+
+            attrStr = "";
+            while((attrStr = refMGame.Client.GetStringAsync($"getPlayerAttributes/{pUserId}/{pId}").Result) == "") {
+                Thread.Sleep(400);
+            }
+
+            CC_Class(pId);
         }
 
         private void CCAttr_DisplayPool(List<int> pAttr) {
@@ -302,7 +241,7 @@ namespace Project2.App.Main {
             return attributes;
         }
 
-        private void CC_Class() {
+        private async void CC_Class(int pId) {
             bool classValid = false;
             string classType = "";
 
@@ -338,16 +277,36 @@ namespace Project2.App.Main {
                 }
             }
 
-            player.Class = classType;
+            var classJson = JsonContent.Create<string>(classType);
+            var classResponse = await refMGame.Client.PostAsync($"createPlayerClass/{pId}", classJson);
+            while(classResponse == null) {
+                Console.WriteLine("-Pause 1");
+                Thread.Sleep(200);
+            }
 
-            //  Setup Level
-            player.Level = 5;
-            player.ExpCurr = RefMActor.D_LevelReqs[((player.Level > 1) ? (player.Level-1) : player.Level).ToString()];
-            player.ExpReq = RefMActor.D_LevelReqs[player.Level.ToString()];
+            var expJson = JsonContent.Create<string>("5_3000/6000");
+            var expResponse = await refMGame.Client.PostAsync($"createPlayerLevel/{pId}", expJson);
+            while(expResponse == null) {
+                Console.WriteLine("-Pause 2");
+                Thread.Sleep(200);
+            }
 
-            player.Proficiency = 3;
+            var skillJson = JsonContent.Create<int>(3);
+            var skillResponse = await refMGame.Client.PostAsync($"createPlayerSkill/{pId}", skillJson);
+            while(skillResponse == null) {
+                Console.WriteLine("-Pause 3");
+                Thread.Sleep(200);
+            }
+
+            var healthJson = JsonContent.Create<string>("5d10");
+            var healthResponse = await refMGame.Client.PostAsync($"createPlayerHealth/{pId}", healthJson);
+            while(healthResponse == null) {
+                Console.WriteLine("-Pause 4");
+                Thread.Sleep(200);
+            }
 
             //  Setup Health
+            /*
             switch(player.Class) {
                 case "Fighter":
                     player.HealthDice = $"{player.Level}d10";
@@ -358,6 +317,7 @@ namespace Project2.App.Main {
                     player.HealthBase = 10 + player.D_AttrMod["CON"];
                     refMGame.WriteLine($"- Adding 10{conMod} to health for level 1", 25);
 
+                    /*
                     for(int i = 1; i < player.Level; i++) {
                         int amt = (refRand.Next(0, 10)+1);
                         player.HealthBase += amt + player.D_AttrMod["CON"];
@@ -368,28 +328,59 @@ namespace Project2.App.Main {
                     player.HealthCurr = 0 + player.HealthBase;
                     break;
             }
+            */
             Console.WriteLine("");
+
+            CC_Combat(pId);
         }
     
-        private async void CC_Combat() {
+        private async void CC_Combat(int pId) {
             //  Setup Unarmed
+            string unarmed = "fists_punches with their_Melee_0/0_1_bludgeoning";
+            var unarmedJson = JsonContent.Create<string>(unarmed);
+            var unarmedResponse = await refMGame.Client.PostAsync($"createPlayerUnarmed/{pId}", unarmedJson);
+            while(unarmedResponse == null) {
+                Console.WriteLine("-Pause 5");
+                Thread.Sleep(200);
+            }
+            /*
             player.Atk_Unarmed = new GameAttack("fists", "punches with their", "Melee", 0, "0_1_bludgeoning");
             player.AttackUnarmed += "fists_punches with their_Melee_0/0_1_bludgeoning";
             refMGame.WriteLine("Giving player an unarmed melee attack called 'fists' with 1 bludgeoning damage", 25);
+            */
 
             //  Setup Combat
+            string longsword = "longsword_swings with their_Melee_0/1d8_0_slashing";
+            var longswordJson = JsonContent.Create<string>(longsword);
+            var attackResponse = await refMGame.Client.PostAsync($"createPlayerAttack/{pId}", longswordJson);
+            while(attackResponse == null) {
+                Console.WriteLine("-Pause 6");
+                Thread.Sleep(200);
+            }
+            /*
             player.Atk_List = new List<GameAttack>();
             player.Atk_List.Add(new GameAttack("longsword", "swings with their", "Melee", 0, "1d8_0_slashing"));
             player.AttackList += "longsword_swings with their_Melee_0/1d8_0_slashing";
             refMGame.WriteLine("Giving player a melee attack called 'longsword' with 1d8 slashing damage", 25);
             Console.WriteLine("");
+            */
 
             //  Setup Defense
+            string armor = "Breastplate_14+DEX/M2";
+            var armorJson = JsonContent.Create<string>(armor);
+            var defenseResponse = await refMGame.Client.PostAsync($"createPlayerDefense/{pId}", armorJson);
+            while(defenseResponse == null) {
+                Console.WriteLine("-Pause 6");
+                Thread.Sleep(200);
+            }
+            /*
             player.DefenseArmor = "Breastplate_14+DEX/M2";
             player.Def_ArmoredAC = 14 + ((player.D_AttrMod["DEX"] > 2) ? 2 : player.D_AttrMod["DEX"]);
             refMGame.WriteLine($"Giving player a breastplate with 14{((player.D_AttrMod["DEX"] > 0) ? "+" : "")}{player.D_AttrMod["DEX"]}({player.Def_ArmoredAC}) AC", 25);
             Console.WriteLine("");
+            */
 
+            /*
             string userStr = refMGame.Client.GetStringAsync("getUserByName/BobUser").Result;
             UserPlayer user = JsonConvert.DeserializeObject<UserPlayer>(userStr);
             Console.WriteLine(user == null);
@@ -407,6 +398,14 @@ namespace Project2.App.Main {
             Console.WriteLine(refMGame.Client.BaseAddress + "createPlayer");
             var postResponse = await refMGame.Client.PostAsync("createPlayer", playerJson);
             //Console.WriteLine(postResponse.Content.ReadAsStringAsync().Result);
+            */
+
+            var playerResponse = refMGame.Client.GetStringAsync($"getPlayerById/{pId}").Result;
+            while(playerResponse == null) {
+                Console.WriteLine("-Pause 7");
+                Thread.Sleep(200);
+            }
+            RefMActor.Player = new ActorPlayer(JsonConvert.DeserializeObject<ActorPlayer>(playerResponse));
         }
     }
 }

@@ -5,14 +5,15 @@ using Project2.Models.Items;
 
 namespace Project2.Models.Actor {
     public class ActorPlayer : GameActor {
-        //Server Variable
-        public int UserId { get; set;}
-        public UserPlayer user {get;set;}
-        public int Score { get; set; }
-        public Inventory inventories {get; set;}
+        //  Server Variable
+        public int? UserId { get; set; }
+        public UserPlayer? User { get; set; }
 
         //  Class Variables
         public string Class { get; set; }
+
+        //  Inventory Variables
+        public Inventory? PlayerInventory { get; set; }
 
         //  Level Variables
         public int Level { get; set; }
@@ -25,7 +26,7 @@ namespace Project2.Models.Actor {
         public string Experience { get; set; }
 
         //  Score Variables
-        //public int Score { get; set; }
+        public int Score { get; set; }
 
         //  Default Constructor
         public ActorPlayer() : base() {
@@ -34,9 +35,9 @@ namespace Project2.Models.Actor {
 
             //  Setup Experience
             Level = 1;
-            Experience = "0/300";
             ExpCurr = 0;
             ExpReq = 300;
+            Experience = $"{ExpCurr}/{ExpReq}";
 
             //  Setup Score
             Score = 0;

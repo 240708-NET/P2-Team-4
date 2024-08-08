@@ -10,7 +10,7 @@ namespace Project2.Data {
         public DbSet<ActorEnemy> Enemies => Set<ActorEnemy>();
         public DbSet<ActorPlayer> Players => Set<ActorPlayer>();
         public DbSet<Item> Items => Set<Item>();
-        public DbSet<UserPlayer> UserPlayer => Set<UserPlayer>();
+        public DbSet<UserPlayer> Users => Set<UserPlayer>();
         public DbSet<Inventory> Inventories => Set<Inventory>();
         public DbSet<Combat> Combats => Set<Combat>();
       
@@ -32,8 +32,8 @@ namespace Project2.Data {
         protected override void OnModelCreating(ModelBuilder PModelBuilder) {
             //One Player to many characters (ActorPlayers)
                 PModelBuilder.Entity<UserPlayer>()
-                .HasMany(up => up.UserPlayers) 
-                .WithOne(ap => ap.user) 
+                .HasMany(up => up.Players) 
+                .WithOne(ap => ap.User) 
                 .HasForeignKey(ap => ap.UserId)
                 .HasPrincipalKey(up => up.Id);
 
@@ -41,7 +41,7 @@ namespace Project2.Data {
             //1 character to 1 inventoryID
             PModelBuilder.Entity<Inventory>()
                 .HasOne(e => e.player)
-                .WithOne(e => e.inventories)
+                .WithOne(e => e.PlayerInventory)
                 .HasForeignKey<Inventory>(e => e.ActorPlayerId);
 
             //One Inventory to many Items

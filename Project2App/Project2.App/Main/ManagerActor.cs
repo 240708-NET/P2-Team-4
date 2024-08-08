@@ -18,7 +18,7 @@ namespace Project2.App.Main {
         public Dictionary<string, int> D_LevelReqs { get; private set; }
 
         //  Player Variables
-        public ActorPlayer Player { get; private set; }
+        public ActorPlayer Player;
 
         //  Constructor
         /// <summary>
@@ -61,7 +61,7 @@ namespace Project2.App.Main {
             AddEnemies();
 
             //  Setup Player
-            Player = new ActorPlayer();
+            //Player = new ActorPlayer();
         }
 
         //  SubMethod of Constructor - Add Enemies
@@ -134,7 +134,7 @@ namespace Project2.App.Main {
         //  MainMethod - Character Creation
         public void CharacterCreation() {
             ManagerActor_CC creation = new ManagerActor_CC(this);
-            Player = creation.CharacterCreation();
+            creation.CharacterCreation();
         }
 
         //  MainMethod - Get Enemy

@@ -8,8 +8,7 @@ namespace Project2.Models.User {
         public int Id { get; set; }
         public string Name { get; set; }
         
-        public List<ActorPlayer> UserPlayers { get; } = new List<ActorPlayer>();
-
+        public List<ActorPlayer> Players { get; } = new List<ActorPlayer>();
 
         public UserPlayer() {
             Name = "";
