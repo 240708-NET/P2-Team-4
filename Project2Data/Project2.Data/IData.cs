@@ -37,5 +37,7 @@ namespace Project2.Data {
         public UserPlayer? GetUserById(int pId);
         public UserPlayer? GetUserByName(string pName);
         public UserPlayer? CreateUser(string pName);  
+
+        public List<string> GetAllPlayersName();
     }
 }
