@@ -5,6 +5,7 @@ import '../DungeonStyle.css';
 
 const Game = () => {
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
   const { userId, playerId } = useParams();
 
   const [enemyName, setEnemyName] = useState('');
@@ -15,9 +16,13 @@ const Game = () => {
   const [playerHealth, setPlayerHealth] = useState('');
   const [playerAC, setPlayerAC] = useState('');
 
-  const [hitText, setHitText] = useState('');
-  const [damageText, setDamageText] = useState('');
-  const [impactText, setImpactText] = useState('');
+  const [hitPText, setPHitText] = useState('');
+  const [damagePText, setPDamageText] = useState('');
+  const [impactPText, setPImpactText] = useState('');
+
+  const [hitEText, setEHitText] = useState('');
+  const [damageEText, setEDamageText] = useState('');
+  const [impactEText, setEImpactText] = useState('');
 
   const createCombat = async () => {
     const response = await fetch("http://localhost:5201/createCombat/"+playerId, { method:"Post" });
@@ -99,22 +104,45 @@ const Game = () => {
     let toHit = responseArr[0].split("_")[1];
 
     if (toHit != "-999") {
-      setHitText(responseArr[0].split("_")[0]);
-      setDamageText(responseArr[1]);
-      setImpactText(responseArr[2]);
+      setPHitText(responseArr[0].split("_")[0]);
+      setPDamageText(responseArr[1]);
+      setPImpactText(responseArr[2]);
 
       if (enemyHealth.split("/")[0] <= 0) {
         let enemyId = await (await fetch("http://localhost:5201/getCombatEnemyId/1")).text();
         fetch('http://localhost:5201/resetEnemyHealth/'+enemyId, { method: "PUT", body:null });
         console.log("dead");
       }
+      else {
+        response = await (await fetch("http://localhost:5201/enemyAttacks/1")).text();
+        console.log(response);
+        responseArr = response.split("/n");
+        toHit = responseArr[0].split("_")[1];
+
+        if (toHit != "-999") {
+          setEHitText(responseArr[0].split("_")[0]);
+          setEDamageText(responseArr[1]);
+          setEImpactText(responseArr[2]);
+        }
+      }
     }
 
     fetchData();
   }
 
-  const handleSaveAndExit = () => {
+  const handleSaveAndExit = async () => {
     console.log('Save and Exit clicked');
+    let player = await fetch(`http://localhost:5201/getPlayerById/${playerId}`);
+    console.log(player);
+
+    await fetch("http://localhost:5201/updatePlayer", {
+      method: "put",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(player)
+    });
+    navigate(`/login`);
   };
 
   return (
@@ -140,9 +168,12 @@ const Game = () => {
             <button type="button" onClick={handleSaveAndExit}>Save & Exit</button>
           </div>
           <div>
-            <p>{hitText}</p>
-            <p>{damageText}</p>
-            <p>{impactText}</p>
+            <p>{hitPText}</p>
+            <p>{damagePText}</p>
+            <p>{impactPText}</p>
+            <p>{hitEText}</p>
+            <p>{damageEText}</p>
+            <p>{impactEText}</p>
           </div>
         </form>
       </div>
