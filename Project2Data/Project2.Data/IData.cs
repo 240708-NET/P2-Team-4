@@ -24,6 +24,7 @@ namespace Project2.Data {
         public ActorPlayer? GetPlayerById(int pId);
         public ActorPlayer? GetPlayerByName(int pUserId, string pName);
         public Dictionary<string, ActorPlayer> GetAllPlayers();
+        public string GetPlayerName(int pId);
         public List<string> GetAllPlayersName();
         public string? GetPlayerAttributes(int pUserId, int pId);
         public ActorPlayer? CreatePlayer(ActorPlayer pPlayer);

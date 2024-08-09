@@ -145,6 +145,13 @@ namespace Project2.API.Controllers {
             return _Data.GetAllPlayersName();
         }
 
+        //  GetMethod - Get Player Name
+        [HttpGet("/getPlayerName/{pId}")]
+        public string? GetPlayerName(int pId) {
+            Console.WriteLine($"HttpGet : Get Player {pId} Name");
+            return _Data.GetPlayerName(pId);
+        }
+
         //  Get Player Attributes
         [HttpGet("/getPlayerAttributes/{pUserId}/{pId}")]
         public string? GetPlayerAttributes(int pUserId, int pId){

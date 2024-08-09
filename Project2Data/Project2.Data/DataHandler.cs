@@ -253,6 +253,16 @@ namespace Project2.Data {
 }
 
 
+        //  GetMethod - Get Player Name
+        public string? GetPlayerName(int pId) {
+            ActorPlayer? player = GetPlayerById(pId);
+            if (player != null) {
+                return player.Name;
+            }
+
+            return null;
+        }
+
         //  GetMethod - Get All Players Name
         public List<string> GetAllPlayersName() {
             List<ActorPlayer> players = context.Players.ToList() ?? new List<ActorPlayer>();

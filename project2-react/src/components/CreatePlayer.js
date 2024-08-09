@@ -92,12 +92,8 @@ const CreatePlayer = ({ userId }) => {
     const finalUserId = userId || routeUserId;
   
     try {
-      const response = await fetch('http://localhost:5201/createPlayer', {
+      const response = await fetch(`http://localhost:5201/createEmptyPlayer/${finalUserId}/${charName}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name: charName, userId: finalUserId }),
       });
   
       if (response.ok) {
@@ -122,8 +118,16 @@ const CreatePlayer = ({ userId }) => {
   
             if (classResponse.ok) {
               alert('Player created successfully!');
-              console.log('Navigating to:', `/game/${finalUserId}`); // Debugging line
-              navigate(`/game/${finalUserId}`);
+              const response = await fetch(`http://localhost:5201/getPlayerByName/${finalUserId}/${charName}`);
+              if (response.ok) {
+                const playerId = await response.text();
+
+                // Update the player's ID and navigate to the game screen
+                console.log('Navigating to:', `/game/${finalUserId}/${playerId}`)
+                navigate(`/game/${finalUserId}/${playerId}`);
+              } else {
+                console.error('Failed to fetch created player details.');
+              }
             } else {
               alert('Failed to assign class.');
             }
