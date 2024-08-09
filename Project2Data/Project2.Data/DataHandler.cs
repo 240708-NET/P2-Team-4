@@ -1004,3 +1004,16 @@ namespace Project2.Data {
         }
     }
 }
+
+//  GetMethod - Get All Players Name
+public List<string> GetAllPlayersName() {
+    List<ActorPlayer> players = context.Players.ToList() ?? new List<ActorPlayer>();
+    List<string> playerNames = new List<string>();
+ 
+    foreach(ActorPlayer player in players) {
+        playerNames.Add(player.Name);
+    }
+ 
+    return playerNames;
+}
+
