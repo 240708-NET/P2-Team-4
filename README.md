@@ -1,10 +1,8 @@
 # Team 4's Project 2
-Extending Connor Gordon's P1 project to include the new requirements.
-Team member's responsibilities
-- Connor: Team Lead
-- Solomon: Database
-- Omar: API
-- Zachary: Website
+The project allows the user to create multiple characters, fight enemies, save their progress, and compare their efforts to other characters. 
+Both the user and their characters are then stored in the database as well as a number of pre-generated enemies. This project is a full stack 
+web application built on the Next.js React framework. Database, backend logic, and API connectivity were built using .NET C# code and utilizing 
+Entity Framework's code-first migrations.
 
 ## User Stories
 - I will be able to create a new login
@@ -80,8 +78,8 @@ Simple list that shows the player and character, tracked by X value
 - Perform  attack in a combat session.
 - End a combat session.
 
-Doing daily standup at the beginning of office hours
-
-Backup Ideas (Decision by Thurs)
-- Store or Restraunt
-- Management, libraries
+Team member's responsibilities
+- Connor: Team Lead
+- Solomon: Database
+- Omar: API
+- Zachary: Website
