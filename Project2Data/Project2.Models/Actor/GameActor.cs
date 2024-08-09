@@ -48,6 +48,7 @@ namespace Project2.Models.Actor {
         public int Def_AC => (Def_ArmoredAC != -1) ? Def_ArmoredAC : Def_UnarmoredAC;
 
         //  Health Variables
+        public string Health { get; set; }
         public string HealthDice { get; set; }
         [NotMapped]
         public int HealthBase { get; set; }
@@ -94,6 +95,7 @@ namespace Project2.Models.Actor {
             HealthDice = "";
             HealthBase = 0;
             HealthCurr = 0;
+            Health = $"{HealthCurr}/{HealthBase}";
 
             //  Setup Name
             Name = "";
@@ -180,7 +182,7 @@ namespace Project2.Models.Actor {
 
             DefenseArmor = "" + pActor.DefenseArmor;
             Def_ArmoredName = "";
-            Def_ArmoredAC = 0;
+            Def_ArmoredAC = -1;
 
             //  Armor has valid parts (Ex: Plate Armor_18, Leather Armor_11+DEX, or Breastplate_14+DEX/M2)
             string[] armorArr = DefenseArmor.Split("_");
@@ -221,14 +223,10 @@ namespace Project2.Models.Actor {
             //  Setup Health
             HealthDice = "" + pActor.HealthDice;
 
-            if (pActor.HealthBase == 0) {
-                int[] healthArr = Array.ConvertAll(HealthDice.Split("d"), int.Parse);
-                HealthBase = healthArr[0] * healthArr[1];
-            }
-            else {
-                HealthBase = 0 + pActor.HealthBase;
-            }
-            HealthCurr = 0 + HealthBase;
+            Health = "" + pActor.Health;
+            string[] healthArr = Health.Split("/");
+            HealthCurr = (healthArr.Length == 2) ? int.Parse(healthArr[0]) : 0;
+            HealthBase = (healthArr.Length == 2) ? int.Parse(healthArr[1]) : 0;
 
             //  Setup Name
             Name = "" + ((pActor.Name != null) ? pActor.Name : "");
@@ -257,24 +255,14 @@ namespace Project2.Models.Actor {
         /// </summary>
         /// <param name="pRand">Reference to global random</param>
         /// <param name="pTarget">Targeted actor for the attack</param>
-        public int Attack(Random pRand, GameActor pTarget) {
+        public string Attack(Random pRand, GameActor pTarget) {
             int rand = (Atk_List.Count > 0) ? pRand.Next(0, Atk_List.Count) : -1;
             return AttackCalc(pRand, pTarget, (rand == -1) ? Atk_Unarmed : Atk_List[rand]);
         }
 
-        //  MainMethod - Attack
-        /// <summary>
-        /// Character-level method for attacking
-        /// </summary>
-        /// <param name="pRand">Reference to global random</param>
-        /// <param name="pTarget">Targeted actor for the attack</param>
-        /// <param name="pAtk">Index of chosen attack</param>
-        /// <returns></returns>
-        public int Attack(Random pRand, GameActor pTarget, int pAtk) {
-            return AttackCalc(pRand, pTarget, (pAtk > 0 && pAtk < Atk_List.Count-1) ? Atk_List[pAtk] : Atk_Unarmed);
-        }
+        private string AttackCalc(Random pRand, GameActor pTarget, GameAttack pAtk) {
+            string result = "";
 
-        private int AttackCalc(Random pRand, GameActor pTarget, GameAttack pAtk) {
             int attackMod = int.Parse(pAtk.Attack_Mod);
 
             //  Part - Calculate if attack lands
@@ -289,27 +277,28 @@ namespace Project2.Models.Actor {
                     int modNum = attackMod + attrMod + Proficiency;
                     string modStr = $"{((modNum != 0) ? ((modNum > 0) ? "+" : "") + modNum : "")}";
 
-                    Console.Write($"{Name} {pAtk.Attack_Action} {pAtk.Attack_Name}, ");
-                    Console.Write($"rolls {dice}{modStr}({(dice + attackMod + attrMod + Proficiency)})");
+                    result += $"{Name} {pAtk.Attack_Action} {pAtk.Attack_Name}, ";
+                    result += $"rolls {dice}{modStr}({(dice + attackMod + attrMod + Proficiency)})";
 
                     //  Part - Check vs Target AC
-                    if ((dice + attackMod + attrMod) >= pTarget.Def_AC) {
-                        Console.WriteLine(", and hits!");
-                        DealDamage(pRand, pTarget, pAtk, attrMod);
-                        return (dice + attackMod + attrMod + Proficiency);
+                    if ((dice + attackMod + attrMod + Proficiency) >= pTarget.Def_AC) {
+                        result += ", and hits!";
+                        result += "_" + (dice + attackMod + attrMod + Proficiency) + "/n";
+                        result += DealDamage(pRand, pTarget, pAtk, attrMod);
                     }
                     else {
-                        Console.WriteLine(", and misses!");
-                        Console.WriteLine("");
-                        return (dice + attackMod + attrMod + Proficiency);
+                        result += ", and misses!";
+                        result += "_" + (dice + attackMod + attrMod + Proficiency) + "/n";
                     }
+
+                    return result;
             }
 
-            return -999;
+            return "-999";
         }
 
         //  SubMethod of Attack - Deal Damage (param Random, Target, Attack, Mod)
-        private void DealDamage(Random pRand, GameActor pTarget, GameAttack pAtk, int pMod) {
+        private string DealDamage(Random pRand, GameActor pTarget, GameAttack pAtk, int pMod) {
             List<string> attackDamages = pAtk.Attack_Damages;
             List<string> attackDmgStrs = new List<string>();
             List<int> attackDmgVals = new List<int>();
@@ -335,15 +324,17 @@ namespace Project2.Models.Actor {
                 }
                 damageStr += "and " + attackDmgStrs[attackDmgStrs.Count-1] + " damage";
             }
-            Console.WriteLine(damageStr);
+            
+            damageStr += "/n";
 
             //  Apply Damage (Applies damage if > 0)
             for (int i = 0; i < attackDamages.Count; i++) {
                 if (attackDmgVals[i] > 0) {
-                    pTarget.TakeDamage(attackDmgVals[i], attackDamages[i].Split("_")[2]);
+                    damageStr += pTarget.TakeDamage(attackDmgVals[i], attackDamages[i].Split("_")[2]);
                 }
             }
-            Console.WriteLine("");
+            
+            return damageStr;
         }
       
         //  MainMethod - Take Damage (param Amount, Type)
@@ -352,12 +343,14 @@ namespace Project2.Models.Actor {
         /// </summary>
         /// <param name="pAmt">Amount of damage taken</param>
         /// <param name="pType">Type of damage taken</param>
-        public void TakeDamage(int pAmt, string pType) {
+        public string TakeDamage(int pAmt, string pType) {
             if (HealthCurr > 0) {
                 HealthCurr -= pAmt;
 
-                Console.WriteLine($"{Name} takes {pAmt} {pType} damage");
+                return $"{Name} takes {pAmt} {pType} damage/n";
             }
+
+            return "";
         }
 
         //  MainMethod - Restore Health
@@ -367,8 +360,8 @@ namespace Project2.Models.Actor {
         public void RestoreHealth() {
             HealthCurr = 0 + HealthBase;
 
-            Console.WriteLine($"Player restores hp to full ({HealthCurr})");
-            Console.WriteLine("");
+            //Console.WriteLine($"Player restores hp to full ({HealthCurr})");
+            //Console.WriteLine("");
         }
 
         //  MainMethod - Restore Health
@@ -380,8 +373,8 @@ namespace Project2.Models.Actor {
             HealthCurr += 0 + pHp;
             HealthCurr = Math.Min(HealthBase, HealthCurr);
 
-            Console.WriteLine($"Player restores 2 hp to {HealthCurr}");
-            Console.WriteLine("");
+            //Console.WriteLine($"Player restores 2 hp to {HealthCurr}");
+            //Console.WriteLine("");
         }
     }
 }

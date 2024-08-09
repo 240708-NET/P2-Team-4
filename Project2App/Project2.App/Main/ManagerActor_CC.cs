@@ -11,8 +11,6 @@ namespace Project2.App.Main {
         //  ~Reference Variables
         public ManagerActor RefMActor { get; private set; }
         private ManagerGame refMGame => RefMActor.RefMGame;
-        private Random refRand => refMGame.Rand;
-
         //  Constructor
         public ManagerActor_CC(ManagerActor pRef) {
             //  Setup ~Reference
@@ -20,10 +18,70 @@ namespace Project2.App.Main {
         }
 
         //  MainMethod - Character Creation
-        public void CharacterCreation() {
+        public async void CharacterCreation() {
+            //CC_Initial();
 
-            CC_Initial();
+            //  Get or create user
+            string userStr = refMGame.Client.GetStringAsync("getUserByName/BobUser").Result;
+            UserPlayer? user = JsonConvert.DeserializeObject<UserPlayer>(userStr);
 
+            if (user == null) {
+                var userResponse = await refMGame.Client.PostAsync("createUser/BobUser", null);
+                userStr = refMGame.Client.GetStringAsync("getUserByName/BobUser").Result;
+                user = JsonConvert.DeserializeObject<UserPlayer>(userStr);
+            }
+
+            //  Get or create player
+            string playerStr = refMGame.Client.GetStringAsync($"getPlayerByName/{user.Id}/Bob").Result ?? "";
+            ActorPlayer? player = JsonConvert.DeserializeObject<ActorPlayer>(playerStr);
+
+            if (player == null) {
+                var playerResponse = await refMGame.Client.PostAsync($"createEmptyPlayer/{user.Id}/Bob", null);
+                playerStr = refMGame.Client.GetStringAsync($"getPlayerByName/{user.Id}/Bob").Result;
+                player = JsonConvert.DeserializeObject<ActorPlayer>(playerStr);
+            }
+
+            //  Rolling attributes
+            string attrStr = refMGame.Client.GetStringAsync($"createAttributePool/2d6+6").Result;
+            List<int> attributePool = JsonConvert.DeserializeObject<List<int>>(attrStr) ?? new List<int>();
+            attributePool.Sort();
+            attributePool.Reverse();
+
+            //  Assigning attributes
+            string attributes = string.Join(",", attributePool);
+            var attrResponse = await refMGame.Client.PostAsync($"createPlayerAttributes/{player.Id}/{attributes}", null);
+
+            //  Create class
+            var classJson = JsonContent.Create<string>("Fighter");
+            var classResponse = await refMGame.Client.PostAsync($"createPlayerClass/{player.Id}", classJson);
+
+            //  Create level and experience
+            var expJson = JsonContent.Create<string>("5_3000/6000");
+            var expResponse = await refMGame.Client.PostAsync($"createPlayerLevel/{player.Id}", expJson);
+
+            //  Create skill
+            var skillJson = JsonContent.Create<int>(3);
+            var skillResponse = await refMGame.Client.PostAsync($"createPlayerSkill/{player.Id}", skillJson);
+
+            //  Create health
+            var healthJson = JsonContent.Create<string>("5d10");
+            var healthResponse = await refMGame.Client.PostAsync($"createPlayerHealth/{player.Id}", healthJson);
+
+            //  Create unarmed attack
+            var unarmedJson = JsonContent.Create<string>("fists_punches with their_Melee_0/0_1_bludgeoning");
+            var unarmedResponse = await refMGame.Client.PostAsync($"createPlayerUnarmed/{player.Id}", unarmedJson);
+
+            //  Create weapon attack
+            var longswordJson = JsonContent.Create<string>("longsword_swings with their_Melee_0/1d8_0_slashing");
+            var attackResponse = await refMGame.Client.PostAsync($"createPlayerAttack/{player.Id}", longswordJson);
+
+            //  Create defense
+            var armorJson = JsonContent.Create<string>("Breastplate_14+DEX/M2");
+            var defenseResponse = await refMGame.Client.PostAsync($"createPlayerDefense/{player.Id}", armorJson);
+
+            //  Get Player
+            var lastResponse = refMGame.Client.GetStringAsync($"getPlayerById/{player.Id}").Result;
+            RefMActor.Player = new ActorPlayer(JsonConvert.DeserializeObject<ActorPlayer>(lastResponse));
         }
 
         private async void CC_Initial() {

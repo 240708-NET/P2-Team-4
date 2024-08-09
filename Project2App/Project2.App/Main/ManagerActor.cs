@@ -8,7 +8,6 @@ namespace Project2.App.Main {
     public class ManagerActor {
         //  ~Reference Variables
         public ManagerGame RefMGame { get; private set; }
-        private Random refRand => RefMGame.Rand;
 
         //  Enemy Variables
         public Dictionary<string, ActorEnemy> D_Enemies { get; private set; }
@@ -76,7 +75,7 @@ namespace Project2.App.Main {
             D_Enemies = new Dictionary<string, ActorEnemy>();
             enemyKeys = new List<string>();
 
-            if (tempDict.Count == 0) {
+            if (0 == 0) {
                 CreateEnemies();
 
                 var enemies = JsonContent.Create<Dictionary<string, ActorEnemy>>(D_Enemies);
@@ -103,6 +102,7 @@ namespace Project2.App.Main {
                 Proficiency = 2,
                 Attributes = "8,14,10,10,8,8",
                 HealthDice = "2d6",
+                Health = "12/12",
                 AttackUnarmed = "fists_strikes with their_Melee_0/0_1_bludgeoning",
                 AttackList = "scimitar_swings with their_Melee_0/1d6_0_slashing",
                 DefenseArmor = "Leather Armor_11+DEX"
@@ -114,6 +114,7 @@ namespace Project2.App.Main {
                 Proficiency = 2,
                 Attributes = "16,12,16,7,11,10",
                 HealthDice = "2d8",
+                Health = "16/16",
                 AttackUnarmed = "fists_strikes with their_Melee_0/0_1_bludgeoning",
                 AttackList = "greataxe_swings with their_Melee_0/1d12_0_slashing",
                 DefenseArmor = "Leather Armor_11+DEX"
@@ -125,6 +126,7 @@ namespace Project2.App.Main {
                 Proficiency = 2,
                 Attributes = "14,16,12,2,11,4",
                 HealthDice = "4d10",
+                Health = "40/40",
                 AttackUnarmed = "fangs_bites with their_Melee_0/0_1_bludgeoning",
                 AttackList = "",
                 DefenseArmor = ""
@@ -142,12 +144,15 @@ namespace Project2.App.Main {
         /// Returns a random enemy from d_Enemies
         /// </summary>
         /// <returns></returns>
+        /*
         public ActorEnemy GetEnemy() {
             return D_Enemies[enemyKeys[refRand.Next(0, enemyKeys.Count)]];
         }
+        */
     
         //  MainMethod - Actor Level Up
         public void ActorLevelUp(ActorPlayer pActor) {
+            /*
             pActor.Level++;
             pActor.ExpReq = D_LevelReqs[pActor.Level.ToString()];
 
@@ -159,6 +164,7 @@ namespace Project2.App.Main {
             pActor.HealthBase += incr;
             pActor.HealthCurr = 0 + pActor.HealthBase;
             RefMGame.WriteLine($"Increasing max health by {incr}", 25);
+            */
         }
     }
 }

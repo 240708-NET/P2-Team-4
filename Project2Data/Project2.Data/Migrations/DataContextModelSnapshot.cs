@@ -46,6 +46,10 @@ namespace Project2.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Health")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("HealthDice")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -97,6 +101,10 @@ namespace Project2.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Health")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("HealthDice")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -140,6 +148,16 @@ namespace Project2.Data.Migrations
 
                     b.Property<int>("ActorPlayerId")
                         .HasColumnType("int");
+
+                    b.Property<int>("EnemyACHigh")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EnemyACLow")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EnemyACRange")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

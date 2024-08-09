@@ -21,6 +21,7 @@ namespace Project2.Data.Migrations
                     AttackUnarmed = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AttackList = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DefenseArmor = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Health = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     HealthDice = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Proficiency = table.Column<int>(type: "int", nullable: false)
@@ -59,6 +60,7 @@ namespace Project2.Data.Migrations
                     AttackUnarmed = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AttackList = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DefenseArmor = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Health = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     HealthDice = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Proficiency = table.Column<int>(type: "int", nullable: false)
@@ -79,8 +81,11 @@ namespace Project2.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ActorPlayerId = table.Column<int>(type: "int", nullable: false),
-                    ActorEnemyId = table.Column<int>(type: "int", nullable: false)
+                    ActorEnemyId = table.Column<int>(type: "int", nullable: false),
+                    EnemyACLow = table.Column<int>(type: "int", nullable: false),
+                    EnemyACHigh = table.Column<int>(type: "int", nullable: false),
+                    EnemyACRange = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ActorPlayerId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
