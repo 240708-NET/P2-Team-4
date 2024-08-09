@@ -1,65 +1,95 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+
 import '../DungeonStyle.css';
 
 const Game = () => {
-  const [stats, setStats] = useState('');
-  const [scenarios, setScenarios] = useState('');
+  const [enemyName, setEnemyName] = useState('');
+  const [enemyHealth, setEnemyHealth] = useState('');
+  const [enemyPAC, setEnemyPAC] = useState('');
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (name === 'stats') {
-      setStats(value);
-    } else if (name === 'scenarios') {
-      setScenarios(value);
+  const [playerName, setPlayerName] = useState('');
+  const [playerHealth, setPlayerHealth] = useState('');
+  const [playerPAC, setPlayerPAC] = useState('');
+
+  const [hitText, setHitText] = useState('');
+  const [damageText, setDamageText] = useState('');
+  const [impactText, setImpactText] = useState('');
+
+  const fetchData = async () => {
+    try {
+      setEnemyName((await (await fetch("http://localhost:5201/getCombatEnemyName/1")).text()).split('_')[0]);
+      setEnemyHealth(await (await fetch("http://localhost:5201/getCombatEnemyHealth/1")).text());
+      setEnemyPAC(await (await fetch("http://localhost:5201/getCombatEnemyPAC/1")).text());
+
+      setPlayerName((await (await fetch("http://localhost:5201/getCombatPlayerName/1")).text()).split('_')[0]);
+      setPlayerHealth(await (await fetch("http://localhost:5201/getCombatPlayerHealth/1")).text());
+      setPlayerPAC(await (await fetch("http://localhost:5201/getCombatPlayerAC/1")).text());
+    }
+    catch (error) {
+        console.error(error);
     }
   };
 
-  const handleAction = (action) => {
-    console.log(`Action ${action} clicked`);
-  };
+  useEffect(() => { fetchData(); }, []);
+
+  const PlayerAttack = async () => {
+    let response = await (await fetch("http://localhost:5201/playerAttacks/1")).text();
+    console.log(response);
+    let responseArr = response.split("/n");
+    let toHit = responseArr[0].split("_")[1];
+
+    if (toHit != "-999") {
+      setHitText(responseArr[0].split("_")[0]);
+      setDamageText(responseArr[1]);
+      setImpactText(responseArr[2]);
+
+      if (enemyHealth.split("/")[0] <= 0) {
+        let enemyId = await (await fetch("http://localhost:5201/getCombatEnemyId/1")).text();
+        fetch('http://localhost:5201/resetEnemyHealth/'+enemyId, { method: "PUT", body:null });
+        console.log("dead");
+      }
+    }
+
+    fetchData();
+  }
 
   const handleSaveAndExit = () => {
     console.log('Save and Exit clicked');
   };
 
   return (
-    <div className="game-container">
-      <h2>Game</h2>
-      <form>
-        <div className="form-group">
-          <label htmlFor="stats">Stats</label>
-          <textarea
-            id="stats"
-            name="stats"
-            rows="15"
-            cols="20"
-            value={stats}
-            onChange={handleChange}
-            className="form-control"
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="scenarios">Scenarios</label>
-          <textarea
-            id="scenarios"
-            name="scenarios"
-            rows="5"
-            cols="50"
-            value={scenarios}
-            onChange={handleChange}
-            className="form-control"
-          />
-        </div>
-        
-        <div className="button-group">
-          <button type="button" onClick={() => handleAction(1)} className="btn-action">Action 1</button>
-          <button type="button" onClick={() => handleAction(2)} className="btn-action">Action 2</button>
-          <button type="button" onClick={() => handleAction(3)} className="btn-action">Action 3</button>
-          <button type="button" onClick={() => handleAction(4)} className="btn-action">Action 4</button>
-          <button type="button" onClick={handleSaveAndExit} className="btn-save">Save & Exit</button>
-        </div>
-      </form>
+    <div className="grid-container">
+      <div className="header">
+        <h1>Game Name</h1>
+      </div>
+      <div className="left">
+      </div>
+      <div className="middle">
+        <form>
+          <div id="Container">
+              <p class="Enemy">{enemyName}</p>
+              <p class="Enemy">HP: {enemyHealth}</p>
+              <p class="Enemy">AC: {enemyPAC}</p>
+              
+              <p class="Player">{playerName}</p>
+              <p class="Player">HP: {playerHealth}</p>
+              <p class="Player">AC: {playerPAC}</p>
+          </div>    
+          <div className="button-group">
+            <button type="button" onClick={PlayerAttack}>Attack</button>
+            <button type="button" onClick={handleSaveAndExit}>Save & Exit</button>
+          </div>
+          <div>
+            <p>{hitText}</p>
+            <p>{damageText}</p>
+            <p>{impactText}</p>
+          </div>
+        </form>
+      </div>
+      <div className="right"></div>
+      <div className="footer">
+        <p>&copy; 2024 Revature Team 4</p>
+      </div>
     </div>
   );
 };

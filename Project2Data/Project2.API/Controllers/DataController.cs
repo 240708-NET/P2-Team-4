@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Project2.Data;
 using Project2.Models.Actor;
+using Project2.Models.Combats;
 using Project2.Models.User;
 
 namespace Project2.API.Controllers {
@@ -17,6 +18,16 @@ namespace Project2.API.Controllers {
         }
 
         //--------------------------------------------------
+        //  Cave Methods
+        //--------------------------------------------------
+        //  GetMethod - Get Cave Area
+        [HttpGet("/getCaveArea/{pId}")]
+        public string GetCaveArea(int pId) {
+            Console.WriteLine("HttpGet : Get Cave Area");
+            return _Data.GetCaveArea(pId);
+        }
+
+        //--------------------------------------------------
         //  Enemy Methods
         //--------------------------------------------------
         //  GetMethod - Get Enemy
@@ -24,6 +35,20 @@ namespace Project2.API.Controllers {
         public ActorEnemy? GetEnemy([FromBody] ActorEnemy pEnemy) {
             Console.WriteLine("HttpGet : Get Enemy");
             return _Data.GetEnemy(pEnemy);
+        }
+
+        //  GetMethod - Get Enemy By Id
+        [HttpGet("/getEnemyById/{pId}")]
+        public ActorEnemy? GetEnemyById(int pId) {
+            Console.WriteLine($"HttpGet : Get Enemy By Id ({pId})");
+            return _Data.GetEnemyById(pId);
+        }
+
+        //  GetMethod - Get Enemy By Name
+        [HttpGet("/getEnemyByName/{pName}")]
+        public ActorEnemy? GetEnemyByName(string pName) {
+            Console.WriteLine($"HttpGet : Get Enemy By Name ({pName})");
+            return _Data.GetEnemyByName(pName);
         }
 
         //  GetMethod - Get All Enemies
@@ -54,14 +79,22 @@ namespace Project2.API.Controllers {
             return _Data.CreateAllEnemies(pEnemies);
         }
 
-       // Update Enemy
-        [HttpPut("/updateEnemy/{pId}")]
-        public ActionResult<ActorEnemy> UpdateEnemy(int pId, [FromBody] ActorEnemy updatedEnemy) {
-            var enemy = _Data.UpdateEnemy(pId, updatedEnemy);
+       // PutMethod - Update Enemy
+        [HttpPut("/updateEnemy")]
+        public ActionResult<ActorEnemy> UpdateEnemy([FromBody] ActorEnemy updatedEnemy) {
+            Console.WriteLine("HttpPut : Update Enemy");
+            var enemy = _Data.UpdateEnemy(updatedEnemy);
             if (enemy == null) {
                 return NotFound();
             }
             return enemy;
+        }
+
+        //  PutMethod - Reset Enemy Health
+        [HttpPut("/resetEnemyHealth/{pId}")]
+        public void ResetEnemyHealth(int pId) {
+            Console.WriteLine("HttpPut : Reset Enemy Health");
+            _Data.ResetEnemyHealth(pId);
         }
 
         // Delete Enemy
@@ -98,13 +131,14 @@ namespace Project2.API.Controllers {
             return _Data.GetPlayerByName(pUserId, pName);
         }
 
-            //  Get All Players
-            [HttpGet("/getAllPlayers")]
-            public Dictionary<string, ActorPlayer> GetAllPlayers() {
-                Console.WriteLine($"HttpGet : Get All Players");
-                return _Data.GetAllPlayers();
-            }
-                //  Get All Players Name
+        //  Get All Players
+        [HttpGet("/getAllPlayers")]
+        public Dictionary<string, ActorPlayer> GetAllPlayers() {
+            Console.WriteLine($"HttpGet : Get All Players");
+            return _Data.GetAllPlayers();
+        }
+        
+        //  Get All Players Name
         [HttpGet("/getAllPlayersName")]
         public List<string> GetAllPlayersName(int pId) {
             Console.WriteLine($"HttpGet : Get All Players Name");
@@ -113,7 +147,7 @@ namespace Project2.API.Controllers {
 
         //  Get Player Attributes
         [HttpGet("/getPlayerAttributes/{pUserId}/{pId}")]
-        public string GetPlayerAttributes(int pUserId, int pId){
+        public string? GetPlayerAttributes(int pUserId, int pId){
             Console.WriteLine($"HttpGet : Get Player {pId} Attributes");
             return _Data.GetPlayerAttributes(pUserId, pId);
         }
@@ -203,6 +237,13 @@ namespace Project2.API.Controllers {
             return _Data.CreatePlayerDefense(pId, pDefense);
         }
 
+        //  PutMethod - Player Gain Exp
+        [HttpPut("/playerGainExp/{pId}/{pAmt}")]
+        public ActorPlayer? PlayerGainExp(int pId, int pAmt) {
+            Console.WriteLine("HttpPut : Player Gain Experience");
+            return _Data.PlayerGainExp(pId, pAmt);
+        }
+
         //  PutMethod - Update Player
         [HttpPut("/updatePlayer")]
         public void UpdatePlayer([FromBody] ActorPlayer pPlayer) {
@@ -232,6 +273,100 @@ namespace Project2.API.Controllers {
         public UserPlayer? CreateUser(string pName) {
             Console.WriteLine("HttpPost : Create User");
             return _Data.CreateUser(pName);
+        }
+
+        //--------------------------------------------------
+        //  Combat Methods
+        //--------------------------------------------------
+        //  GetMethod - Get Combat
+        [HttpGet("/getCombat")]
+        public Combat? GetCombat() {
+            Console.WriteLine($"HttpGet : Get Combat");
+            return _Data.GetCombat();
+        }
+
+        //  GetMethod - Get Combat Enemy Id
+        [HttpGet("/getCombatEnemyId/{pId}")]
+        public int GetCombatEnemyId(int pId) {
+            Console.WriteLine($"HttpGet : Get Combat Enemy Id");
+            return _Data.GetCombatEnemyId(pId);
+        }
+
+        //  GetMethod - Get Combat Enemy Name
+        [HttpGet("/getCombatEnemyName/{pId}")]
+        public string GetCombatEnemyName(string pId) {
+            Console.WriteLine($"HttpGet : Get Combat Enemy Name");
+            return _Data.GetCombatEnemyName(pId);
+        }
+
+        //  GetMethod - Get Combat Enemy Health
+        [HttpGet("/getCombatEnemyHealth/{pId}")]
+        public string GetCombatEnemyHealth(int pId) {
+            Console.WriteLine($"HttpGet : Get Combat Enemy Health");
+            return _Data.GetCombatEnemyHealth(pId);
+        }
+
+        //  GetMethod - Get Combat Enemy PAC
+        [HttpGet("/getCombatEnemyPAC/{pId}")]
+        public string GetCombatEnemyPAC(int pId) {
+            Console.WriteLine($"HttpGet : Get Combat Enemy PAC");
+            return _Data.GetCombatEnemyPAC(pId);
+        }
+
+        //  GetMethod - Get Combat Player Name
+        [HttpGet("/getCombatPlayerName/{pId}")]
+        public string GetCombatPlayerName(int pId) {
+            Console.WriteLine($"HttpGet : Get Combat Player Name");
+            return _Data.GetCombatPlayerName(pId);
+        }
+
+        //  GetMethod - Get Combat Player Health
+        [HttpGet("/getCombatPlayerHealth/{pId}")]
+        public string GetCombatPlayerHealth(int pId) {
+            Console.WriteLine($"HttpGet : Get Combat Player Health");
+            return _Data.GetCombatPlayerHealth(pId);
+        }
+
+        //  GetMethod - Get Combat Player AC
+        [HttpGet("/getCombatPlayerAC/{pId}")]
+        public string GetCombatPlayerAC(int pId) {
+            Console.WriteLine($"HttpGet : Get Combat Player AC");
+            return _Data.GetCombatPlayerAC(pId);
+        }
+
+        //  GetMethod - Get Combat By Id
+        [HttpGet("/getCombatById/{pId}")]
+        public Combat? GetCombatById(int pId) {
+            Console.WriteLine($"HttpGet : Get Combat By Id ({pId})");
+            return _Data.GetCombatById(pId);
+        }
+
+        //  PostMethod - Create Combat
+        [HttpPost("/createCombat/{pPlayerId}")]
+        public int? CreateCombat(int pPlayerId) {
+            Console.WriteLine("HttpPost : Create Combat");
+            return _Data.CreateCombat(pPlayerId);
+        }
+
+        //  GetMethod - Player Attacks
+        [HttpGet("/playerAttacks/{pCombatId}")]
+        public string PlayerAttacks(int pCombatId) {
+            Console.WriteLine("HttpPut : Player Attacks");
+            return _Data.PlayerAttacks(pCombatId);
+        }
+
+        //  GetMethod - Enemy Attacks
+        [HttpGet("/enemyAttacks/{pCombatId}")]
+        public string EnemyAttacks(int pCombatId) {
+            Console.WriteLine("HttpPut : Enemy Attacks");
+            return _Data.EnemyAttacks(pCombatId);
+        }
+
+        //  GetMethod - Combat Ending
+        [HttpGet("/combatEnds/{pCombatId}/{pActionId}")]
+        public string CombatEnding(int pCombatId, int pActionId) {
+            Console.WriteLine("HttpGet : Combat End");
+            return _Data.CombatEnding(pCombatId, pActionId);
         }
     }
 }

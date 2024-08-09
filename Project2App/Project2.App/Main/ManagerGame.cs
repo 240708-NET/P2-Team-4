@@ -1,17 +1,16 @@
-using System;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text.Json;
-using Newtonsoft.Json;
+//using System;
+//using System.Net.Http;
+//using System.Net.Http.Json;
+//using System.Text.Json;
+//using Newtonsoft.Json;
 using Project2.Models.Actor;
 using Project2.Models.User;
 
 namespace Project2.App.Main {
     public class ManagerGame {
-        //  ~Reference Variables
-        public Random Rand;
-        public string Port = "5201";
+        //  ~Server Variables
         public HttpClient Client;
+        public string Port = "5201";
 
         //  End Variables
         public bool Force_Quit;
@@ -22,12 +21,8 @@ namespace Project2.App.Main {
         public ManagerCombat M_Combat { get; private set; }
 
         //  Constructor
-        /// <summary>
-        /// Manager that connects all parts of game logic
-        /// </summary>
         public ManagerGame() {
-            //  Setup ~Reference
-            Rand = new Random();
+            //  Setup ~Server
             Client = new HttpClient() { BaseAddress = new Uri($"http://localhost:{Port}/") };
 
             //  Setup Managers
@@ -37,9 +32,6 @@ namespace Project2.App.Main {
         }
 
         //  MainMethod - Play Game
-        /// <summary>
-        /// Main Game Method
-        /// </summary>
         public void PlayGame() {
             //  Game logic will loop until player force quits
             while(Force_Quit == false) {
@@ -48,11 +40,6 @@ namespace Project2.App.Main {
         }
 
         //  MainMethod - Write Text
-        /// <summary>
-        /// Slowly writes text to the console [REMAINS IN LINE]
-        /// </summary>
-        /// <param name="pText">Text to print</param>
-        /// <param name="pSleep">Time delay between characters</param>
         public void WriteText(string pText, int pSleep) {
             for(int i = 0; i < pText.Length; i++) {
                 Console.Write(pText.Substring(i, 1));
@@ -61,11 +48,6 @@ namespace Project2.App.Main {
         }
 
         //  MainMethod - Write Line
-        /// <summary>
-        /// Slowly writes text to the console [SEND TO NEW LINE]
-        /// </summary>
-        /// <param name="pText">Text to print</param>
-        /// <param name="pSleep">Time delay between characters</param>
         public void WriteLine(string pText, int pSleep) {
             WriteText(pText, pSleep);
             Console.WriteLine("");

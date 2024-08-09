@@ -1,10 +1,14 @@
-using System.Runtime.Serialization;
+using System.IO.Compression;
 using Microsoft.EntityFrameworkCore;
 using Project2.Models.Actor;
+using Project2.Models.Combats;
 using Project2.Models.User;
 
 namespace Project2.Data {
     public class DataHandler : IData {
+        //  ~Reference Variables
+        private readonly Random rand;
+        //  ~Server Variables
         private DataContext context;
 
         //--------------------------------------------------
@@ -12,7 +16,36 @@ namespace Project2.Data {
         //--------------------------------------------------
         //  Constructor
         public DataHandler(string pConnect) {
+            //  Setup ~Reference
+            rand = new Random();
+
+            //  Setup ~Server
             context = new DataContext(new DbContextOptionsBuilder<DataContext>().UseSqlServer(pConnect).Options);
+        }
+
+        //--------------------------------------------------
+        //  Cave Methods
+        //--------------------------------------------------
+        //  GetMethod - Get Cave Area
+        public string GetCaveArea(int pId) {
+            int chance = rand.Next(0, 100) + 1;
+
+            //  20% chance for nothing (Player restores 2 health)
+            if (chance <= 20) {
+                PlayerRestoresHealth(pId, 2);
+                return "Nothing";
+            }
+
+            //  60% chance for combat encounter
+            else if (chance <= 80) {
+                return "Combat";
+            }
+
+            //  20% chance for treasure room (Player gains 100 exp)
+            else {
+                PlayerGainExp(pId, 100);
+                return "Experience";
+            }
         }
 
         //--------------------------------------------------
@@ -21,6 +54,16 @@ namespace Project2.Data {
         //  GetMethod - Get Enemy
         public ActorEnemy? GetEnemy(ActorEnemy pEnemy) {
             return context.Enemies.FirstOrDefault(p => p.Id == pEnemy.Id);
+        }
+
+        //  GetMethod - Get Enemy By Id
+        public ActorEnemy? GetEnemyById(int pId) {
+            return context.Enemies.FirstOrDefault(p => p.Id == pId);
+        }
+
+        //  GetMethod - Get Enemy By Name
+        public ActorEnemy? GetEnemyByName(string pName) {
+            return context.Enemies.FirstOrDefault(p => p.Name == pName);
         }
 
         //  GetMethod - Get All Enemies
@@ -50,8 +93,19 @@ namespace Project2.Data {
 
         //  PostMethod - Create Enemy
         public ActorEnemy? CreateEnemy(ActorEnemy pEnemy) {
-            context.Add(pEnemy);
-            context.SaveChanges();
+            ActorEnemy? existingEnemy = GetEnemy(pEnemy);
+
+            //  Enemy already exists
+                if (existingEnemy != null) {
+                    Console.WriteLine("-Updating enemy: " + pEnemy.Name);
+                    UpdateEnemy(pEnemy);
+                }
+
+                //  Enemy doesn't exist
+                else {
+                    Console.WriteLine("-Adding enemy: " + pEnemy.Name);
+                    context.Add(pEnemy);
+                }
 
             return GetEnemy(pEnemy);
         }
@@ -59,28 +113,67 @@ namespace Project2.Data {
         //  PostMethod - Create All Enemies
         public Dictionary<string, ActorEnemy> CreateAllEnemies(Dictionary<string, ActorEnemy> pEnemies) {
             foreach(var enemy in pEnemies) {
-                Console.WriteLine("-Adding enemy: " + enemy.Value.Name);
-                context.Add(enemy.Value);
+                ActorEnemy? existingEnemy = GetEnemyByName(enemy.Value.Name);
+
+                //  Enemy already exists
+                if (existingEnemy != null) {
+                    Console.WriteLine("-Updating enemy: " + enemy.Value.Name);
+                    UpdateEnemy(enemy.Value);
+                }
+
+                //  Enemy doesn't exist
+                else {
+                    Console.WriteLine("-Adding enemy: " + enemy.Value.Name);
+                    context.Add(enemy.Value);
+                }
             }
             context.SaveChanges();
 
             return GetAllEnemies();
         }
 
-         // Update Enemy
-        public ActorEnemy? UpdateEnemy(int pId, ActorEnemy pEnemy) {
-            var existingEnemy = context.Enemies.FirstOrDefault(e => e.Id == pId);
-            if (existingEnemy != null) {
-                existingEnemy.Name = pEnemy.Name;
-                existingEnemy.HealthDice = pEnemy.HealthDice;
-                existingEnemy.HealthBase = pEnemy.HealthBase;
-                existingEnemy.HealthCurr = pEnemy.HealthCurr;
+        // PutMethod - Update Enemy
+        public ActorEnemy? UpdateEnemy(ActorEnemy pEnemy) {
+            ActorEnemy? enemy = GetEnemyByName(pEnemy.Name.Contains('_') ? pEnemy.Name : pEnemy.Name + "_False");
 
-                // Update other properties as necessary
+            if (enemy != null) {
+                enemy.Attributes = "" + pEnemy.Attributes; 
+
+                enemy.AttackUnarmed = "" + pEnemy.AttackUnarmed;
+                enemy.AttackList = "" + pEnemy.AttackList;
+
+                enemy.DefenseArmor = "" + pEnemy.DefenseArmor;
+
+                enemy.HealthDice = "" + pEnemy.HealthDice;
+
+                if (pEnemy.HealthBase != 0) {
+                    enemy.Health = "" + pEnemy.HealthCurr + "/" + pEnemy.HealthBase;
+                }
+                else {
+                    enemy.Health = "" + pEnemy.Health;
+                }
+
+                enemy.Name = "" + pEnemy.Name + (pEnemy.Name.Contains('_') ? "" : "_False");
+
+                context.Entry(enemy).State = EntityState.Modified;
                 context.SaveChanges();
-                return existingEnemy;
             }
-            return null;
+
+            return enemy;
+        }
+
+        //  PutMethod - Reset Enemy Health
+        public void ResetEnemyHealth(int pId) {
+            ActorEnemy? tempEnemy = GetEnemyById(pId);
+
+            if (tempEnemy != null) {
+                Console.WriteLine("-" + tempEnemy.Health);
+                string[] healthArr = tempEnemy.Health.Split("/");
+                tempEnemy.Health = healthArr[1] + "/" + healthArr[1];
+                
+                context.Entry(tempEnemy).State = EntityState.Modified;
+                context.SaveChanges();
+            }
         }
 
         // Delete Enemy
@@ -114,17 +207,14 @@ namespace Project2.Data {
 
         // Just a test method to see if we can get all players from the database
         // just to demonastrate that we can get data from the database
-        public Dictionary<string, ActorPlayer> GetAllPlayers()
-        {
+        public Dictionary<string, ActorPlayer> GetAllPlayers() {
             Dictionary<string, ActorPlayer> result = new Dictionary<string, ActorPlayer>();
             List<ActorPlayer> Players = context.Players.ToList();
 
             Console.WriteLine($"Fetched {Players.Count} players from the database.");
 
-            foreach (ActorPlayer player in Players)
-            {
-                try
-                {
+            foreach (ActorPlayer player in Players) {
+                try {
                     Console.WriteLine($"Processing player: {player.Name}, ID: {player.Id}");
 
 
@@ -153,8 +243,8 @@ namespace Project2.Data {
 
                     result.Add($"{player.Name.Split("_")[0]}", new ActorPlayer(player));
                 }
-                catch (Exception ex)
-                {
+                
+                catch (Exception ex) {
                     Console.WriteLine($"Error processing player with ID {player.Id}: {ex.Message}");
                 }
             }
@@ -162,23 +252,20 @@ namespace Project2.Data {
             return result;
         }
 
-
-
         //  GetMethod - Get All Players Name
         public List<string> GetAllPlayersName() {
-    List<ActorPlayer> players = context.Players.ToList() ?? new List<ActorPlayer>();
-    List<string> playerNames = new List<string>();
- 
-    foreach(ActorPlayer player in players) {
-        playerNames.Add(player.Name);
-    }
- 
-    return playerNames;
+            List<ActorPlayer> players = context.Players.ToList() ?? new List<ActorPlayer>();
+            List<string> playerNames = new List<string>();
+        
+            foreach(ActorPlayer player in players) {
+                playerNames.Add(player.Name);
+            }
+        
+            return playerNames;
         }
- 
 
         //  GetMethod - Get Player Attributes
-        public string GetPlayerAttributes(int pUserId, int pId) {
+        public string? GetPlayerAttributes(int pUserId, int pId) {
             ActorPlayer? player = context.Players.FirstOrDefault(p => p.UserId == pUserId && p.Id == pId);
             if (player != null) {
                 return player.Attributes;
@@ -419,6 +506,7 @@ namespace Project2.Data {
                 player.HealthDice = "" + pDice;
                 player.HealthBase = 0 + health;
                 player.HealthCurr = 0 + player.HealthBase;
+                player.Health = $"{player.HealthCurr}/{player.HealthBase}";
                 context.SaveChanges();
             }
 
@@ -454,7 +542,7 @@ namespace Project2.Data {
 
             //  Player isn't null
             else {
-                player.AttackList += ((player.AttackList != null) ? "," : "") + pAttack;
+                player.AttackList = pAttack;
                 context.SaveChanges();
             }
 
@@ -479,27 +567,80 @@ namespace Project2.Data {
             return player;
         }
 
+        //  PutMethod - Player Gain Experience
+        public ActorPlayer? PlayerGainExp(int pId, int pAmt) {
+            ActorPlayer? tempPlayer = GetPlayerById(pId);
+
+            if (tempPlayer != null) {
+                ActorPlayer player = new ActorPlayer(tempPlayer);
+
+                //  Increase Experience
+                player.ExpCurr += pAmt;
+
+                //  Level up
+                if (player.ExpCurr >= player.ExpReq) {
+                    //  Increase Level and Exp Req
+                    player.Level++;
+                    player.ExpReq *= 2;
+
+                    //  Increase Health
+                    string[] diceArr = player.HealthDice.Split("d");
+                    int diceNum = int.Parse(diceArr[0]);
+                    int diceAmt = int.Parse(diceArr[1]);
+                    player.HealthDice = (diceNum+1) + "d" + diceAmt;
+
+                    Random rand = new Random();
+                    player.HealthBase += rand.Next(0, diceAmt) + 1;
+                    player.HealthCurr = 0 + player.HealthBase;
+                }
+
+                UpdatePlayer(player);
+            }
+
+            return tempPlayer;
+        }
+
+        //  PutMethod - Player Restores Health
+        public ActorPlayer? PlayerRestoresHealth(int pId, int pAmt) {
+            ActorPlayer? tempPlayer = GetPlayerById(pId);
+
+            if (tempPlayer != null) {
+                ActorPlayer player = new ActorPlayer(tempPlayer);
+
+                //  Increase Health
+                player.HealthCurr = Math.Min(player.HealthCurr + pAmt, player.HealthBase);
+
+                UpdatePlayer(player);
+            }
+
+            return tempPlayer;
+        }
+
         //  PutMethod - Update Player
         public void UpdatePlayer(ActorPlayer pPlayer) {
             ActorPlayer? player = GetPlayer(pPlayer);
+
             if (player != null) {
-                player.Attributes = $"{pPlayer.D_AttrScr["STR"]},{pPlayer.D_AttrScr["DEX"]},{pPlayer.D_AttrScr["CON"]},{pPlayer.D_AttrScr["INT"]},{pPlayer.D_AttrScr["WIS"]},{pPlayer.D_AttrScr["CHA"]}";
+                player.Attributes = "" + pPlayer.Attributes;
 
-                player.AttackUnarmed = "" + pPlayer.Atk_Unarmed.ToString();
-
-                string attacks = "";
-                for(int i = 0; i < pPlayer.Atk_List.Count; i++) {
-                    attacks += player.Atk_List[i] + ((i < pPlayer.Atk_List.Count-1) ? "," : "");
-                }
-                player.AttackList = "" + attacks;
+                player.AttackUnarmed = "" + pPlayer.AttackUnarmed;
+                player.AttackList = "" + pPlayer.AttackList;
 
                 player.DefenseArmor = "" + pPlayer.DefenseArmor;
 
                 player.HealthDice = "" + pPlayer.HealthDice;
 
+                if (pPlayer.HealthBase != 0) {
+                    player.Health = "" + pPlayer.HealthCurr + "/" + pPlayer.HealthBase;
+                }
+                else {
+                    player.Health = "" + pPlayer.Health;
+                }
+
                 player.Name = "" + pPlayer.Name;
 
                 player.Proficiency = 0 + pPlayer.Proficiency;
+                player.Experience = $"{pPlayer.ExpCurr}/{pPlayer.ExpReq}";
 
                 context.Entry(player).State = EntityState.Modified;
                 context.SaveChanges();
@@ -538,6 +679,356 @@ namespace Project2.Data {
             context.SaveChanges();
 
             return GetUserByName(pName);
+        }
+    
+        //--------------------------------------------------
+        //  Combat Methods
+        //--------------------------------------------------
+        //  GetMethod - Get Combat
+        public Combat? GetCombat() {
+            List<Combat> combatList = context.Combats.ToList() ?? new List<Combat>();
+
+            if (combatList.Count > 0) { 
+                return combatList[0];
+            }
+
+            return null;
+        }
+
+        //  GetMethod - Get Combat Enemy Id
+        public int GetCombatEnemyId(int pCombatId){
+            Combat? combat = GetCombatById(pCombatId);
+
+            if (combat == null) {
+                return -1;
+            }
+
+            else {
+                ActorEnemy? enemy = GetEnemyById(combat.ActorEnemyId);
+
+                if (enemy == null) {
+                    return -1; 
+                }
+                
+                else {
+                    return enemy.Id;
+                }
+            }
+        }
+
+        //  GetMethod - Get Combat Enemy Name
+        public string GetCombatEnemyName(string pCombatId) {
+            Combat? combat = GetCombatById(int.Parse(pCombatId));
+
+            if (combat == null) {
+                return "ERROR (GetCombatEnemyName): Combat doesn't exist";
+            }
+
+            else {
+                ActorEnemy? enemy = GetEnemyById(combat.ActorEnemyId);
+
+                if (enemy == null) {
+                    return "ERROR (GetCombatEnemyName): Enemy doesn't exist"; 
+                }
+                
+                else {
+                    return enemy.Name;
+                }
+            }
+        }
+
+        //  GetMethod - Get Combat Enemy Health
+        public string GetCombatEnemyHealth(int pCombatId) {
+            Combat? combat = GetCombatById(pCombatId);
+
+            if (combat == null) {
+                return "ERROR (GetCombatEnemyHealth): Combat doesn't exist";
+            }
+
+            else {
+                ActorEnemy? enemy = GetEnemyById(combat.ActorEnemyId);
+
+                if (enemy == null) {
+                    return "ERROR (GetCombatEnemyHealth): Enemy doesn't exist"; 
+                }
+                
+                else {
+                    return enemy.Health;
+                }
+            }
+        }
+
+        //  GetMethod - Get Combat Enemy PAC
+        public string GetCombatEnemyPAC(int pCombatId) {
+            Combat? combat = GetCombatById(pCombatId);
+
+            if (combat == null) {
+                return "ERROR (GetCombatEnemyPAC): Combat doesn't exist";
+            }
+
+            else {
+                return combat.EnemyACRange;
+            }
+        }
+
+        //  GetMethod - Get Combat Player Name
+        public string GetCombatPlayerName(int pCombatId) {
+            Combat? combat = GetCombatById(pCombatId);
+
+            if (combat == null) {
+                return "ERROR (GetCombatPlayerName): Combat doesn't exist";
+            }
+
+            else {
+                ActorPlayer? player = GetPlayerById(combat.ActorPlayerId);
+
+                if (player == null) {
+                    return "ERROR (GetCombatPlayerName): Enemy doesn't exist"; 
+                }
+                
+                else {
+                    return player.Name;
+                }
+            }
+        }
+
+        //  GetMethod - Get Combat Player Health
+        public string GetCombatPlayerHealth(int pCombatId) {
+            Combat? combat = GetCombatById(pCombatId);
+
+            if (combat == null) {
+                return "ERROR (GetCombatPlayerHealth): Combat doesn't exist";
+            }
+
+            else {
+                ActorPlayer? player = GetPlayerById(combat.ActorPlayerId);
+
+                if (player == null) {
+                    return "ERROR (GetCombatPlayerHealth): Player doesn't exist"; 
+                }
+                
+                else {
+                    return player.Health;
+                }
+            }
+        }
+
+        //  GetMethod - Get Combat Player AC
+        public string GetCombatPlayerAC(int pCombatId) {
+            Combat? combat = GetCombatById(pCombatId);
+
+            if (combat == null) {
+                return "ERROR (GetCombatPlayerAC): Combat doesn't exist";
+            }
+
+            else {
+                ActorPlayer? tempPlayer = GetPlayerById(combat.ActorPlayerId);
+
+                if (tempPlayer == null) {
+                    return "ERROR (GetCombatPlayerHealth): Player doesn't exist"; 
+                }
+                
+                else {
+                    ActorPlayer player = new ActorPlayer(tempPlayer);
+                    return "" + player.Def_AC;
+                }
+            }
+        }
+
+        //  GetMethod - Get Combat By Id
+        public Combat? GetCombatById(int pId) {
+            return context.Combats.FirstOrDefault(c => c.Id == pId);
+        }
+
+        //  GetMethod - Create Combat
+        public int? CreateCombat(int pPlayerId) {
+            var existingPlayer = GetPlayerById(pPlayerId);
+            var enemyRandom = GetRandomEnemy();
+
+            if (existingPlayer != null && enemyRandom != null) {
+                Combat? existingCombat = GetCombat();
+
+                if (existingCombat != null) {
+                    existingCombat.ActorPlayerId = pPlayerId;
+                    existingCombat.ActorPlayerId = pPlayerId;
+                    existingCombat.ActorEnemyId = enemyRandom.Id;
+                    existingCombat.EnemyACLow = -999;
+                    existingCombat.EnemyACHigh = 999;
+                    existingCombat.EnemyACRange = "???";
+
+                    context.Entry(existingCombat).State = EntityState.Modified;
+                    context.SaveChanges();
+                }
+
+                else {
+                    existingCombat = new Combat() {
+                        ActorPlayerId = pPlayerId,
+                        ActorEnemyId = enemyRandom.Id,
+                        EnemyACLow = -999,
+                        EnemyACHigh = 999,
+                        EnemyACRange = "???"
+                    };
+                    context.Combats.Add(existingCombat);
+                    context.SaveChanges();
+                }
+
+                return context.Combats.ToList()[0].Id;
+            }
+
+            return null;
+        }
+
+        //  PutMethod - Player Attacks
+        public string PlayerAttacks(int pCombatId) {
+            Combat? combat = GetCombatById(pCombatId);
+
+            //  Combat is null
+            if (combat == null) {
+                return "ERROR (PlayerAttacks): Combat Not Found";
+            }
+
+            //  Combat isn't null
+            else {
+                //  Pull Combat Player and Enemy
+                ActorPlayer? tempPlayer = GetPlayerById(combat.ActorPlayerId);
+                ActorEnemy? tempEnemy = GetEnemyById(combat.ActorEnemyId);
+
+                //  If either player or enemy is null
+                if (tempPlayer == null || tempEnemy == null) {
+                    return "ERROR (PlayerAttacks): Player or Enemy is null";
+                }
+
+                //  Neither player nor enemy is null
+                else {
+                    //  Build player and enemy from database info
+                    ActorPlayer player = new ActorPlayer(tempPlayer);
+                    ActorEnemy enemy = new ActorEnemy(tempEnemy);
+
+                    //  Player attacks, also deals damage to enemy
+                    string attackResult = player.Attack(new Random(), enemy);
+                    string[] attackArr = attackResult.Split("/n");
+                    if (attackArr[0].Contains('_')) {
+
+                    }
+
+                    int toHit = attackArr[0].Contains('_') ? int.Parse(attackArr[0].Split('_')[1]) : -999;
+
+
+                    UpdateEnemy(enemy);
+
+                    //  Update enemy ac range
+                    UpdateEnemyPAC(combat, toHit);
+
+                    return attackResult;
+                }
+            }
+        }
+
+        //  SubMethod of PlayerAttacks - Update Enemy PAC
+        public void UpdateEnemyPAC(Combat pCombat, int pToHit) {
+            ActorEnemy? tempEnemy = GetEnemyById(pCombat.ActorEnemyId);
+
+            if (tempEnemy != null) {
+                ActorEnemy enemy = new ActorEnemy(tempEnemy);
+
+                if (pToHit != -999) {
+                    if (pToHit >= enemy.Def_AC) {
+                        //  Player hasn't hit before and has missed, increment enemy_ACLow to switch to range
+                        if (pCombat.EnemyACHigh == 999 && pCombat.EnemyACLow != -999) {
+                            pCombat.EnemyACLow++;
+                        }
+                        pCombat.EnemyACHigh = (pToHit < pCombat.EnemyACHigh) ? pToHit : pCombat.EnemyACHigh;
+                    }
+
+                    else {
+                        pCombat.EnemyACLow = (pToHit > pCombat.EnemyACLow) ? pToHit : pCombat.EnemyACLow;
+                    }
+                }
+
+                //  Actual AC is known
+                if (pCombat.EnemyACHigh == pCombat.EnemyACLow) {
+                    pCombat.EnemyACRange = "" + pCombat.EnemyACHigh;
+                }
+
+                //  AC range is known
+                else if (pCombat.EnemyACHigh != 999 && pCombat.EnemyACLow != -999) {
+                    pCombat.EnemyACRange = pCombat.EnemyACLow + "-" + pCombat.EnemyACHigh;
+                }
+
+                //  AC low is known
+                else if (pCombat.EnemyACLow != -999) {
+                    pCombat.EnemyACRange = ">" + pCombat.EnemyACLow;
+                }
+
+                //  AC high is known
+                else if (pCombat.EnemyACHigh != 999) {
+                    pCombat.EnemyACRange = "<" + pCombat.EnemyACHigh;
+                }
+
+                context.SaveChanges();
+            }
+        }
+
+        //  PutMethod - Enemy Attacks
+        public string EnemyAttacks(int pCombatId) {
+            Combat? combat = GetCombatById(pCombatId);
+
+            //  Combat is null
+            if (combat == null) {
+                return "ERROR (PlayerAttacks): Combat Not Found";
+            }
+
+            //  Combat isn't null
+            else {
+                //  Pull Combat Player and Enemy
+                ActorPlayer? tempPlayer = GetPlayerById(combat.ActorPlayerId);
+                ActorEnemy? tempEnemy = GetEnemyById(combat.ActorEnemyId);
+
+                //  If either player or enemy is null
+                if (tempPlayer == null || tempEnemy == null) {
+                    return "ERROR (PlayerAttacks): Player or Enemy is null";
+                }
+
+                //  Neither player nor enemy is null
+                else {
+                    //  Build player and enemy from database info
+                    ActorPlayer player = new ActorPlayer(tempPlayer);
+                    ActorEnemy enemy = new ActorEnemy(tempEnemy);
+
+                    //  Player attacks, also deals damage to enemy
+                    string attackResult = enemy.Attack(new Random(), player);
+                    UpdatePlayer(player);
+                    //Console.WriteLine("Player: " + player.HealthCurr + "/" + player.HealthBase);
+
+                    return attackResult;
+                }
+            }
+        }
+
+        //  PutMethod - Combat Ending
+        public string CombatEnding(int pCombatId, int pActionId) {
+            Combat? combat = GetCombatById(pCombatId);
+
+            //  Combat is null
+            if (combat == null) {
+                return "ERROR (PlayerAttacks): Combat Not Found";
+            }
+
+            //  Combat isn't null
+            else {
+                if (pActionId == 2) {
+                    ActorPlayer? tempPlayer = GetPlayerById(combat.ActorPlayerId);
+
+                    //  Player isn't null
+                    if (tempPlayer != null) {
+                        ActorPlayer player = new ActorPlayer(tempPlayer);
+                        player.RestoreHealth();
+                        UpdatePlayer(player);
+                    }
+                }
+
+                return "Combat ended";
+            }
         }
     }
 }

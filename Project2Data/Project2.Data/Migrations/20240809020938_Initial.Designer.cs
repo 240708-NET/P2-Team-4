@@ -12,7 +12,7 @@ using Project2.Data;
 namespace Project2.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240807210658_Initial")]
+    [Migration("20240809020938_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -46,6 +46,10 @@ namespace Project2.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DefenseArmor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Health")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -100,6 +104,10 @@ namespace Project2.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Health")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("HealthDice")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -143,6 +151,16 @@ namespace Project2.Data.Migrations
 
                     b.Property<int>("ActorPlayerId")
                         .HasColumnType("int");
+
+                    b.Property<int>("EnemyACHigh")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EnemyACLow")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EnemyACRange")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
