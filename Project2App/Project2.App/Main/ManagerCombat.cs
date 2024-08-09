@@ -1,20 +1,27 @@
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Text.Json;
+using Newtonsoft.Json;
 using Project2.Models.Actor;
+using Project2.Models.Combats;
 
 namespace Project2.App.Main {
     public class ManagerCombat {
         //  ~Reference Variables
         public ManagerGame RefMGame { get; private set; }
-        private Random RefRand => RefMGame.Rand;
 
         private ManagerActor refMActor => RefMGame.M_Actor;
         private ManagerCave refMCave => RefMGame.M_Cave;
 
+        private int CombatId;
+        public bool CombatActive;
+
         //  Combat Variables
-        private bool combatActive;
         private string combatUI_Solid => $"+{new string('-', 29)}+";
         private string combatUI_Empty => $"+{new string(' ', 29)}+";
 
         //  Enemy Variables
+        /*
         private ActorEnemy enemy;
         public ActorEnemy Enemy {
             get { return enemy; }
@@ -33,13 +40,14 @@ namespace Project2.App.Main {
         private int enemy_ACHigh;
         private string enemy_ACRange;
         private string enemy_AC => $"+ {new string(' ', (23 - enemy_ACRange.Length))}AC: {enemy_ACRange} +";
+        */
 
         //  Player Variables
         private ActorPlayer player => RefMGame.M_Actor.Player;
 
-        private string player_Name => $"+ {player.Name}{new string(' ', (27 - player.Name.Length))} +";
-        private string player_Health => $"+ HP: {player.HealthStr}{new string(' ', (23 - player.HealthStr.Length))} +";
-        private string player_AC => $"+ AC: {player.Def_AC}{new string(' ', (23 - player.Def_AC.ToString().Length))} +";
+        //private string player_Name => $"+ {player.Name}{new string(' ', (27 - player.Name.Length))} +";
+        //private string player_Health => $"+ HP: {player.Health}{new string(' ', (23 - player.Health.Length))} +";
+        //private string player_AC => $"+ AC: {player.Def_AC}{new string(' ', (23 - player.Def_AC.ToString().Length))} +";
 
         //  Constructor
         /// <summary>
@@ -51,80 +59,115 @@ namespace Project2.App.Main {
             RefMGame = pRef;
 
             //  Setup Combat
-            combatActive = true;
+            CombatActive = true;
 
             //  Setup Enemy
-            enemy = new ActorEnemy();
+            //enemy = new ActorEnemy();
 
-            enemy_ACLow = -999;
-            enemy_ACHigh = 999;
-            enemy_ACRange = "???";
+            //enemy_ACLow = -999;
+            //enemy_ACHigh = 999;
+            //enemy_ACRange = "???";
         }
 
         //  MainMethod - Combat Setup
-        public void CombatSetup() {
-            combatActive = true;
-
+        public async void CombatSetup() {
             //  Setup Enemy
-            enemy = new ActorEnemy(RefMGame.M_Actor.GetEnemy());
+            //enemy = new ActorEnemy(RefMGame.M_Actor.GetEnemy());
+            //string enemyStr = RefMGame.Client.GetStringAsync("getRandomEnemy").Result;
+            //enemy = new ActorEnemy(JsonConvert.DeserializeObject<ActorEnemy>(enemyStr));
 
-            enemy_ACLow = -999;
-            enemy_ACHigh = 999;
-            enemy_ACRange = "???";
+            //Console.WriteLine(player.Id);
+
+            /*
+            //  Create class
+            var classJson = JsonContent.Create<string>("Fighter");
+            var classResponse = await refMGame.Client.PostAsync($"createPlayerClass/{player.Id}", classJson);
+            */
+
+            var combatResponse = await RefMGame.Client.PostAsync($"createCombat/{player.Id}", null);
+            string combatStr = await combatResponse.Content.ReadAsStringAsync();
+            CombatId = JsonConvert.DeserializeObject<int>(combatStr);
         }
 
         //  MainMethod - Combat Loop
         public void CombatLoop() {
-            string enemyName = ((enemy.Proper == false) ? enemy.Name.ToLower() : enemy.Name).Split("_")[0];
-            string enemyStr = ((enemy.Article != "") ? (enemy.Article + " ") : "") + enemyName;
+            //string enemyName = ((enemy.Proper == false) ? enemy.Name.ToLower() : enemy.Name).Split("_")[0];
+            //string enemyStr = ((enemy.Article != "") ? (enemy.Article + " ") : "") + enemyName;
 
             //  Encounter initiated
-            Console.WriteLine($"Player has encountered {enemyStr}! Combat initiated!");
+            //Console.WriteLine($"Player has encountered {enemyStr}! Combat initiated!");
             string action = Console.ReadLine() ?? "";
 
             //  Initial action check
             switch(action) {
                 //  Force Quit action
                 case "fquit":
-                    combatActive = false;
+                    CombatActive = false;
                     refMCave.GameActive = false;
                     RefMGame.Force_Quit = true;
                     break;
             }
 
-            while (combatActive == true) {
+            while (CombatActive == true) {
                 DisplayCombat_Status();
 
                 //  If player is still active, handle their input
-                if (player.HealthCurr > 0) {
+                //bool playerAction = false;
+                string playerStr = RefMGame.Client.GetStringAsync($"/getCombatPlayerHealth/{CombatId}").Result;
+                string[] playerHealthArr = playerStr.Split("/");
+                int playerHealthCurr = int.Parse(playerHealthArr[0]);
+
+                if (playerHealthCurr > 0) {
                     PlayerAction_Combat();
                 }
 
                 //  If player is dead, end combat and exit
                 else {
-                    RefMGame.WriteLine($"{player.Name} has died to {enemyStr}", 75);
-                    combatActive = false;
+                    //RefMGame.WriteLine($"{player.Name} has died to {enemyStr}", 75);
+                    CombatActive = false;
                     refMCave.GameActive = false;
                     RefMGame.Force_Quit = true;
                 }
 
-                if (combatActive == true) {
+                if (CombatActive == true) {
                     //  If enemy is still active, handle their action
-                    if (enemy.HealthCurr > 0) {
-                        EnemyAction_Combat();
+                    string enemyStr = RefMGame.Client.GetStringAsync($"/getCombatEnemyHealth/{CombatId}").Result;
+                    string[] enemyHealthArr = enemyStr.Split("/");
+                    int enemyHealthCurr = int.Parse(enemyHealthArr[0]);
+                    if (enemyHealthCurr > 0) {
+                        //EnemyAction_Combat();
+
+                        string attackResponse = RefMGame.Client.GetStringAsync($"/enemyAttacks/{CombatId}").Result;
+                        if (attackResponse != "-999") {
+                            string[] attackArr = attackResponse.Split("/n");
+                            
+                            string[] hitArr = attackArr[0].Split("_");
+                            Console.WriteLine(hitArr[0]);
+                            
+                            for (int i = 1; i < attackArr.Length; i++) {
+                                Console.WriteLine(attackArr[i]);
+                            }
+                        }
                     }
 
                     //  If enemy is dead, end combat and exit
                     else {
-                        RefMGame.WriteLine($"{enemy.Name} has died! Player gains 200 exp.", 25);
-                        player.GainExperience(200);
-                        RefMGame.WriteLine($"Player exp: {player.ExpStr}", 25);
+                        //RefMGame.WriteLine($"{enemy.Name} has died! Player gains 200 exp.", 25);
+                        string enemyId = RefMGame.Client.GetStringAsync($"/getCombatEnemyId/{CombatId}").Result;
+                        RefMGame.Client.PutAsync($"/resetEnemyHealth/{int.Parse(enemyId)}", null);
 
+                        var expResponse = RefMGame.Client.PutAsync($"/playerGainExp/{player.Id}/{200}", null);
+
+                        //player.GainExperience(200);
+                        //RefMGame.WriteLine($"Player exp: {player.ExpStr}", 25);
+
+                        /*
                         if (player.ExpCurr >= player.ExpReq) {
                             RefMGame.WriteLine($"Player levels up from {player.Level} to {(player.Level+1)}!", 25);
                             refMActor.ActorLevelUp(player);
                         }
-                        Console.WriteLine("");
+                        */
+                        //Console.WriteLine("");
 
                         DisplayCombat_Ending();
                         PlayerAction_Ending();
@@ -137,15 +180,32 @@ namespace Project2.App.Main {
         private void DisplayCombat_Status() {
             Console.WriteLine(combatUI_Solid);
 
-            Console.WriteLine(enemy_Name);
-            Console.WriteLine(enemy_Health);
-            Console.WriteLine(enemy_AC);
+            //  Enemy Name
+            string enemyName = RefMGame.Client.GetStringAsync($"/getCombatEnemyName/{CombatId}").Result;
+            enemyName = enemyName.Split("_")[0];
+            Console.WriteLine($"+ {new string(' ', 27 - enemyName.Length)}{enemyName} +");
+
+            //  Enemy Health
+            string enemyHealth = RefMGame.Client.GetStringAsync($"/getCombatEnemyHealth/{CombatId}").Result;
+            Console.WriteLine($"+ {new string(' ', 23 - enemyHealth.Length)}HP: {enemyHealth} +");
+
+            //  Enemy PAC
+            string enemyPAC = RefMGame.Client.GetStringAsync($"/getCombatEnemyPAC/{CombatId}").Result;
+            Console.WriteLine($"+ {new string(' ', (23 - enemyPAC.Length))}AC: {enemyPAC} +");
 
             Console.WriteLine(combatUI_Empty);
 
-            Console.WriteLine(player_Name);
-            Console.WriteLine(player_Health);
-            Console.WriteLine(player_AC);
+            //  Player Name
+            string playerName = RefMGame.Client.GetStringAsync($"/getCombatPlayerName/{CombatId}").Result;
+            Console.WriteLine($"+ {playerName}{new string(' ', (27 - playerName.Length))} +");
+
+            //  Player Health
+            string playerHealth = RefMGame.Client.GetStringAsync($"/getCombatPlayerHealth/{CombatId}").Result;
+            Console.WriteLine($"+ HP: {playerHealth}{new string(' ', (23 - playerHealth.Length))} +");
+
+            //  Player AC
+            string playerAC = RefMGame.Client.GetStringAsync($"/getCombatPlayerAC/{CombatId}").Result;
+            Console.WriteLine($"+ AC: {playerAC}{new string(' ', (23 - playerAC.Length))} +");
 
             Console.WriteLine(combatUI_Solid);
             DisplayCombat_Options();
@@ -159,7 +219,16 @@ namespace Project2.App.Main {
 
         //  SubMethod of CombatLoop - Display Combat Ending
         private void DisplayCombat_Ending() {
-            Console.WriteLine($"You've defeated {((enemy.Proper == false) ? "the " + enemy.Name.ToLower() : enemy.Name)}. Do you wish to press on or rest awhile?");
+            string combatStr = RefMGame.Client.GetStringAsync($"/getCombatById/{CombatId}").Result;
+            Combat combat = JsonConvert.DeserializeObject<Combat>(combatStr);
+
+            int enemyId = combat.ActorEnemyId;
+            string enemyStr = RefMGame.Client.GetStringAsync($"/GetEnemyById/{enemyId}").Result;
+            ActorEnemy enemy = JsonConvert.DeserializeObject<ActorEnemy>(enemyStr);
+
+            string[] enemyNameArr = enemy.Name.Split("_");
+
+            Console.WriteLine($"You've defeated {((enemyNameArr[1] == "False") ? "the " + enemyNameArr[0].ToLower() : enemyNameArr[0])}. Do you wish to press on or rest awhile?");
             Console.WriteLine("(1) Press on  (2) Rest");
         }
 
@@ -181,7 +250,7 @@ namespace Project2.App.Main {
                         case "fquit":
                             actionCount = 5;
                             actionValid = true;
-                            combatActive = false;
+                            CombatActive = false;
                             refMCave.GameActive = false;
                             RefMGame.Force_Quit = true;
                             break;
@@ -191,8 +260,19 @@ namespace Project2.App.Main {
                             actionCount = 5;
                             actionValid = true;
 
-                            playerToHit = player.Attack(RefRand, enemy);
-                            PAC_UpdateEnemyAC(playerToHit);
+                            //playerToHit = player.Attack(RefRand, enemy);
+                            string attackResponse = RefMGame.Client.GetStringAsync($"/playerAttacks/{CombatId}").Result;
+                            if (attackResponse != "-999") {
+                                string[] attackArr = attackResponse.Split("/n");
+
+                                string[] hitArr = attackArr[0].Split("_");
+                                Console.WriteLine(hitArr[0]);
+
+                                for (int i = 1; i < attackArr.Length; i++) {
+                                    Console.WriteLine(attackArr[i]);
+                                }
+                            }
+                            //PAC_UpdateEnemyAC(playerToHit);
                             break;
 
                         //  Invalid input
@@ -203,16 +283,17 @@ namespace Project2.App.Main {
                 }
 
                 if (actionValid == false) {
-                    Console.WriteLine("Reset Display");
-                    Console.WriteLine("");
+                    //Console.WriteLine("Reset Display");
+                    //Console.WriteLine("");
 
-                    DisplayCombat_Status();
+                    //DisplayCombat_Status();
                 }
             }
         }
 
         //  SubMethod of PlayerAction_Combat - Update Enemy AC
         private void PAC_UpdateEnemyAC(int pToHit) {
+            /*
             if (pToHit != -999) {
                 if (pToHit >= enemy.Def_AC) {
                     //  Player hasn't hit before and has missed, increment enemy_ACLow to switch to range
@@ -246,10 +327,11 @@ namespace Project2.App.Main {
             else if (enemy_ACHigh != 999) {
                 enemy_ACRange = "<" + enemy_ACHigh;
             }
+            */
         }
 
         //  SubMethod of CombatLoop - Player Action Ending
-        private void PlayerAction_Ending() {
+        private async void PlayerAction_Ending() {
             string action = "";
             int actionCount = 0;
             bool actionValid = false;
@@ -265,7 +347,7 @@ namespace Project2.App.Main {
                         case "fquit":
                             actionCount = 5;
                             actionValid = true;
-                            combatActive = false;
+                            CombatActive = false;
 
                             refMCave.GameActive = false;
                             RefMGame.Force_Quit = true;
@@ -275,16 +357,17 @@ namespace Project2.App.Main {
                         case "1":
                             actionCount = 5;
                             actionValid = true;
-                            combatActive = false;
+                            CombatActive = false;
                             break;
 
                         //  Player rests
                         case "2":
                             actionCount = 5;
                             actionValid = true;
-                            combatActive = false;
+                            CombatActive = false;
 
-                            player.RestoreHealth();
+                            //player.RestoreHealth();
+                            string actionResponse = RefMGame.Client.GetStringAsync($"/combatEnds/{CombatId}/{2}").Result;
                             break;
 
                         //  Invalid input
@@ -295,17 +378,17 @@ namespace Project2.App.Main {
                 }
 
                 if (actionValid == false) {
-                    Console.WriteLine("Reset Display");
-                    Console.WriteLine("");
+                    //Console.WriteLine("Reset Display");
+                    //Console.WriteLine("");
 
-                    DisplayCombat_Status();
+                    //DisplayCombat_Status();
                 }
             }
         }
         
         //  SubMethod of CombatLoop - Enemy Action Combat
         private void EnemyAction_Combat() {
-            enemy.Attack(RefRand, player);
+            //enemy.Attack(RefRand, player);
         }
     }
 }

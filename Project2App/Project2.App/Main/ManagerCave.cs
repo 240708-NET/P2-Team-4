@@ -4,7 +4,6 @@ namespace Project2.App.Main {
     public class ManagerCave {
         //  ~Reference Variables
         public ManagerGame RefMGame { get; private set; }
-        private Random refRand => RefMGame.Rand;
 
         private ManagerActor refMActor => RefMGame.M_Actor;
         private ActorPlayer player => refMActor.Player;
@@ -28,8 +27,28 @@ namespace Project2.App.Main {
             Introduction();
 
             while (GameActive == true) {
-                ExploreArea();
-                Console.ReadLine();
+                //ExploreArea();
+                switch(RefMGame.Client.GetStringAsync($"/getCaveArea/{player.Id}").Result) {
+                    case "Nothing":
+                        Console.WriteLine("You encountered nothing and had a rest. Recover 2 hp");
+                        break;
+
+                    case "Combat":
+                        refMCombat.CombatActive = true;
+                        refMCombat.CombatSetup();
+                        refMCombat.CombatLoop();
+                        break;
+
+                    case "Experience":
+                        Console.WriteLine("You enter the room and see a treasure chest full of gold. Gain 100 exp.");
+                        break;
+                }
+
+                string action = Console.ReadLine() ?? "";
+                if (action == "fquit") {
+                    GameActive = false;
+                    RefMGame.Force_Quit = true;
+                }
             }
         }
 
@@ -47,6 +66,7 @@ namespace Project2.App.Main {
             Console.ReadLine();
 
             refMActor.CharacterCreation();
+            
             while(player == null) {
                 Thread.Sleep(400);
             }
@@ -54,7 +74,7 @@ namespace Project2.App.Main {
 
         //  MainMethod - Explore Area
         public void ExploreArea() {
-            int chance = refRand.Next(0, 100)+1;
+            int chance = 0;//refRand.Next(0, 100)+1;
 
             //  20% chance for nothing
             if (chance <= 20) {
