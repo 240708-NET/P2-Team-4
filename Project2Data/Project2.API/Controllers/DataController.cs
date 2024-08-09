@@ -227,5 +227,12 @@ namespace Project2.API.Controllers {
             Console.WriteLine("HttpPost : Create User");
             return _Data.CreateUser(pName);
         }
+
+        //  Get All Players Name
+[HttpGet("/getAllPlayersName")]
+public List<string> GetAllPlayersName(int pId) {
+    Console.WriteLine($"HttpGet : Get All Players Name");
+    return _Data.GetAllPlayersName();
+}
     }
 }
