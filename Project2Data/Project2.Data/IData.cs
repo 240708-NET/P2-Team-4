@@ -51,7 +51,7 @@ namespace Project2.Data {
         //  Combat Variables
         public Combat? GetCombat();
         public int GetCombatEnemyId(int pCombatId);
-        public string GetCombatEnemyName(int pCombatId);
+        public string GetCombatEnemyName(string pCombatId);
         public string GetCombatEnemyHealth(int pCombatId);
         public string GetCombatEnemyPAC(int pCombatId);
         public string GetCombatPlayerName(int pCombatId);

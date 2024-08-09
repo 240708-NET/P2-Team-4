@@ -22,6 +22,12 @@ namespace Project2.API {
             //app.UseHttpsRedirection();
             app.MapControllers();
 
+            app.UseCors(options => options.AllowAnyHeader()
+                .WithOrigins("http://localhost:3000")
+                .AllowAnyMethod()
+                .AllowCredentials()
+                );
+
             //  Run API
             app.Run();
         }

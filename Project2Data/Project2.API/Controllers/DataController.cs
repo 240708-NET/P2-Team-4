@@ -301,7 +301,7 @@ namespace Project2.API.Controllers {
 
         //  GetMethod - Get Combat Enemy Name
         [HttpGet("/getCombatEnemyName/{pId}")]
-        public string GetCombatEnemyName(int pId) {
+        public string GetCombatEnemyName(string pId) {
             Console.WriteLine($"HttpGet : Get Combat Enemy Name");
             return _Data.GetCombatEnemyName(pId);
         }

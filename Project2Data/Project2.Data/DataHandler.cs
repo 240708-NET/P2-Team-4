@@ -689,8 +689,8 @@ namespace Project2.Data {
         }
 
         //  GetMethod - Get Combat Enemy Name
-        public string GetCombatEnemyName(int pCombatId) {
-            Combat? combat = GetCombatById(pCombatId);
+        public string GetCombatEnemyName(string pCombatId) {
+            Combat? combat = GetCombatById(int.Parse(pCombatId));
 
             if (combat == null) {
                 return "ERROR (GetCombatEnemyName): Combat doesn't exist";
@@ -1004,16 +1004,3 @@ namespace Project2.Data {
         }
     }
 }
-
-//  GetMethod - Get All Players Name
-public List<string> GetAllPlayersName() {
-    List<ActorPlayer> players = context.Players.ToList() ?? new List<ActorPlayer>();
-    List<string> playerNames = new List<string>();
- 
-    foreach(ActorPlayer player in players) {
-        playerNames.Add(player.Name);
-    }
- 
-    return playerNames;
-}
-
