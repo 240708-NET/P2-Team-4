@@ -11,6 +11,19 @@ namespace Project2.API {
             builder.Services.AddSwaggerGen();
             builder.Services.AddScoped<IData>(pData => new DataHandler(File.ReadAllText("../Project2.Data/ConnectionString")));
 
+             builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowReactApp",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:3000")
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    });
+            });
+
+
+
             // Build API
             var app = builder.Build();
 
@@ -21,7 +34,8 @@ namespace Project2.API {
 
             //app.UseHttpsRedirection();
             app.MapControllers();
-
+            
+            app.UseCors("AllowReactApp");
             //  Run API
             app.Run();
         }

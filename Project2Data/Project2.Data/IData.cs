@@ -15,6 +15,7 @@ namespace Project2.Data {
         //  Player Variables
         public ActorPlayer? GetPlayer(ActorPlayer pPlayer);
         public ActorPlayer? GetPlayerById(int pId);
+        public List<string> GetAllPlayersName();
         public ActorPlayer? GetPlayerByName(int pUserId, string pName);
         public Dictionary<string, ActorPlayer> GetAllPlayers();
         public string GetPlayerAttributes(int pUserId, int pId);

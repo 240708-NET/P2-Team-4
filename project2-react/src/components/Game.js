@@ -23,14 +23,11 @@ const Game = () => {
   };
 
   return (
-    <div className="grid-container">
-      <div className="header">
-        <h1>Game Name</h1>
-      </div>
-      <div className="left"></div>
-      <div className="middle">
-        <form>
-          <label htmlFor="stat">Stats</label>
+    <div className="game-container">
+      <h2>Game</h2>
+      <form>
+        <div className="form-group">
+          <label htmlFor="stats">Stats</label>
           <textarea
             id="stats"
             name="stats"
@@ -38,9 +35,12 @@ const Game = () => {
             cols="20"
             value={stats}
             onChange={handleChange}
+            className="form-control"
           />
+        </div>
 
-          <label htmlFor="scenario">Scenarios</label>
+        <div className="form-group">
+          <label htmlFor="scenarios">Scenarios</label>
           <textarea
             id="scenarios"
             name="scenarios"
@@ -48,21 +48,18 @@ const Game = () => {
             cols="50"
             value={scenarios}
             onChange={handleChange}
+            className="form-control"
           />
-          
-          <div className="button-group">
-            <button type="button" onClick={() => handleAction(1)}>Action 1</button>
-            <button type="button" onClick={() => handleAction(2)}>Action 2</button>
-            <button type="button" onClick={() => handleAction(3)}>Action 3</button>
-            <button type="button" onClick={() => handleAction(4)}>Action 4</button>
-            <button type="button" onClick={handleSaveAndExit}>Save & Exit</button>
-          </div>
-        </form>
-      </div>
-      <div className="right"></div>
-      <div className="footer">
-        <p>&copy; 2024 Game Company</p>
-      </div>
+        </div>
+        
+        <div className="button-group">
+          <button type="button" onClick={() => handleAction(1)} className="btn-action">Action 1</button>
+          <button type="button" onClick={() => handleAction(2)} className="btn-action">Action 2</button>
+          <button type="button" onClick={() => handleAction(3)} className="btn-action">Action 3</button>
+          <button type="button" onClick={() => handleAction(4)} className="btn-action">Action 4</button>
+          <button type="button" onClick={handleSaveAndExit} className="btn-save">Save & Exit</button>
+        </div>
+      </form>
     </div>
   );
 };

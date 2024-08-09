@@ -98,11 +98,17 @@ namespace Project2.API.Controllers {
             return _Data.GetPlayerByName(pUserId, pName);
         }
 
-        //  Get All Players
-        [HttpGet("/getAllPlayers")]
-        public Dictionary<string, ActorPlayer> GetAllPlayers() {
-            Console.WriteLine($"HttpGet : Get All Players");
-            return _Data.GetAllPlayers();
+            //  Get All Players
+            [HttpGet("/getAllPlayers")]
+            public Dictionary<string, ActorPlayer> GetAllPlayers() {
+                Console.WriteLine($"HttpGet : Get All Players");
+                return _Data.GetAllPlayers();
+            }
+                //  Get All Players Name
+        [HttpGet("/getAllPlayersName")]
+        public List<string> GetAllPlayersName(int pId) {
+            Console.WriteLine($"HttpGet : Get All Players Name");
+            return _Data.GetAllPlayersName();
         }
 
         //  Get Player Attributes
