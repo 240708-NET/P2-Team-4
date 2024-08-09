@@ -1,36 +1,96 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import '../DungeonStyle.css';
 
 const Game = () => {
+  const [loading, setLoading] = useState(true);
+  const { userId, playerId } = useParams();
+
   const [enemyName, setEnemyName] = useState('');
   const [enemyHealth, setEnemyHealth] = useState('');
   const [enemyPAC, setEnemyPAC] = useState('');
 
   const [playerName, setPlayerName] = useState('');
   const [playerHealth, setPlayerHealth] = useState('');
-  const [playerPAC, setPlayerPAC] = useState('');
+  const [playerAC, setPlayerAC] = useState('');
 
   const [hitText, setHitText] = useState('');
   const [damageText, setDamageText] = useState('');
   const [impactText, setImpactText] = useState('');
 
+  const createCombat = async () => {
+    const response = await fetch("http://localhost:5201/createCombat/"+playerId, { method:"Post" });
+    fetchData();
+    setLoading(false);
+  }
+
   const fetchData = async () => {
     try {
-      setEnemyName((await (await fetch("http://localhost:5201/getCombatEnemyName/1")).text()).split('_')[0]);
-      setEnemyHealth(await (await fetch("http://localhost:5201/getCombatEnemyHealth/1")).text());
-      setEnemyPAC(await (await fetch("http://localhost:5201/getCombatEnemyPAC/1")).text());
+      let response = await fetch("http://localhost:5201/getCombatEnemyName/1");
+      if (response.ok) {
+        let eNameData = await response.text();
+        eNameData = eNameData.split('_')[0];
+        
+        console.log("Fetched enemy name: ", eNameData);
+        setEnemyName(eNameData);
+      }
 
-      setPlayerName((await (await fetch("http://localhost:5201/getCombatPlayerName/1")).text()).split('_')[0]);
-      setPlayerHealth(await (await fetch("http://localhost:5201/getCombatPlayerHealth/1")).text());
-      setPlayerPAC(await (await fetch("http://localhost:5201/getCombatPlayerAC/1")).text());
+      response = await fetch("http://localhost:5201/getCombatEnemyHealth/1");
+      if (response.ok) {
+        let eHealthData = await response.text();
+        
+        console.log("Fetched enemy health: ", eHealthData);
+        setEnemyHealth(eHealthData);
+      }
+
+      response = await fetch("http://localhost:5201/getCombatEnemyPAC/1");
+      if (response.ok) {
+        let ePACData = await response.text();
+        
+        console.log("Fetched enemy PAC: ", ePACData);
+        setEnemyPAC(ePACData);
+      }
+
+      response = await fetch("http://localhost:5201/getCombatPlayerName/1");
+      if (response.ok) {
+        let pNameata = await response.text();
+        
+        console.log("Fetched player name: ", pNameata);
+        setPlayerName(pNameata);
+      }
+
+      response = await fetch("http://localhost:5201/getCombatPlayerHealth/1");
+      if (response.ok) {
+        let pHealthData = await response.text();
+        
+        console.log("Fetched player health: ", pHealthData);
+        setPlayerHealth(pHealthData);
+      }
+
+      response = await fetch("http://localhost:5201/getCombatPlayerAC/1");
+      if (response.ok) {
+        let pACData = await response.text();
+        
+        console.log("Fetched player AC: ", pACData);
+        setPlayerAC(pACData);
+      }
     }
+
     catch (error) {
         console.error(error);
     }
   };
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { 
+    if (loading == true) {
+        createCombat();
+    }
+
+    else {
+      fetchData(); 
+    } 
+  }, []);
 
   const PlayerAttack = async () => {
     let response = await (await fetch("http://localhost:5201/playerAttacks/1")).text();
@@ -73,7 +133,7 @@ const Game = () => {
               
               <p class="Player">{playerName}</p>
               <p class="Player">HP: {playerHealth}</p>
-              <p class="Player">AC: {playerPAC}</p>
+              <p class="Player">AC: {playerAC}</p>
           </div>    
           <div className="button-group">
             <button type="button" onClick={PlayerAttack}>Attack</button>
