@@ -137,14 +137,7 @@ namespace Project2.API.Controllers {
             Console.WriteLine($"HttpGet : Get All Players");
             return _Data.GetAllPlayers();
         }
-
-        //  Get Player Name
-        [HttpGet("/getPlayerName/{pId}")]
-        public string GetPlayerName(int pId) {
-            Console.WriteLine($"HttpGet : Get Player {pId} Name");
-            return _Data.GetPlayerName(pId);
-        }
-
+        
         //  Get All Players Name
         [HttpGet("/getAllPlayersName")]
         public List<string> GetAllPlayersName(int pId) {
