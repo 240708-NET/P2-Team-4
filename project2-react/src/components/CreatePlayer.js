@@ -117,6 +117,51 @@ const CreatePlayer = ({ userId }) => {
             });
   
             if (classResponse.ok) {
+              await Promise.all([
+                fetch(`http://localhost:5201/createPlayerLevel/${newPlayer.id}`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify("5_3000/6000"),
+                }),
+                fetch(`http://localhost:5201/createPlayerSkill/${newPlayer.id}`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(3),
+                }),
+                fetch(`http://localhost:5201/createPlayerHealth/${newPlayer.id}`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify("5d10"),
+                }),
+                fetch(`http://localhost:5201/createPlayerUnarmed/${newPlayer.id}`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify("fists_punches with their_Melee_0/0_1_bludgeoning"),
+                }),
+                fetch(`http://localhost:5201/createPlayerAttack/${newPlayer.id}`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify("longsword_swings with their_Melee_0/1d8_0_slashing"),
+                }),
+                fetch(`http://localhost:5201/createPlayerDefense/${newPlayer.id}`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify("Breastplate_14+DEX/M2"),
+                }),
+              ]);
+
               alert('Player created successfully!');
               const response = await fetch(`http://localhost:5201/getPlayerByName/${finalUserId}/${charName}`);
               if (response.ok) {
@@ -227,7 +272,6 @@ const CreatePlayer = ({ userId }) => {
           {renderStepContent()}
         </form>
       </div>
-     
     </div>
   );
 };
