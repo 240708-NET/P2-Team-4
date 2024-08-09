@@ -207,50 +207,51 @@ namespace Project2.Data {
 
         // Just a test method to see if we can get all players from the database
         // just to demonastrate that we can get data from the database
-        public Dictionary<string, ActorPlayer> GetAllPlayers() {
-            Dictionary<string, ActorPlayer> result = new Dictionary<string, ActorPlayer>();
-            List<ActorPlayer> Players = context.Players.ToList();
+     public Dictionary<string, ActorPlayer> GetAllPlayers() {
+    Dictionary<string, ActorPlayer> result = new Dictionary<string, ActorPlayer>();
+    List<ActorPlayer> Players = context.Players.ToList();
 
-            Console.WriteLine($"Fetched {Players.Count} players from the database.");
+    Console.WriteLine($"Fetched {Players.Count} players from the database.");
 
-            foreach (ActorPlayer player in Players) {
-                try {
-                    Console.WriteLine($"Processing player: {player.Name}, ID: {player.Id}");
+    foreach (ActorPlayer player in Players) {
+        try {
+            Console.WriteLine($"Processing player: {player.Name}, ID: {player.Id}");
 
+            // Check if the properties are null or empty and assign default values if necessary
+            player.Class = string.IsNullOrEmpty(player.Class) ? "fighter" : player.Class;
+            player.Experience = string.IsNullOrEmpty(player.Experience) ? "0/300" : player.Experience;
+            player.Attributes = string.IsNullOrEmpty(player.Attributes) ? "10,10,10,10,10,10" : player.Attributes;
+            player.AttackUnarmed = string.IsNullOrEmpty(player.AttackUnarmed) ? "0/1_bludgeoning" : player.AttackUnarmed;
+            player.AttackList = string.IsNullOrEmpty(player.AttackList) ? "0/1_slashing" : player.AttackList;
+            player.DefenseArmor = string.IsNullOrEmpty(player.DefenseArmor) ? "10" : player.DefenseArmor;
+            player.HealthDice = string.IsNullOrEmpty(player.HealthDice) ? "1d6" : player.HealthDice;
+            player.Name = string.IsNullOrEmpty(player.Name) ? "Unnamed" : player.Name;
+            player.Health = string.IsNullOrEmpty(player.Health) ? "10" : player.Health;
+            player.Level = player.Level == 0 ? 1 : player.Level;
+            player.Score = player.Score == 0 ? 0 : player.Score;
+            player.Proficiency = player.Proficiency == 0 ? 2 : player.Proficiency;
 
-                    player.Class = string.IsNullOrEmpty(player.Class) ? "fighter" : player.Class;
-                    player.Experience = string.IsNullOrEmpty(player.Experience) ? "0/300" : player.Experience;
-                    player.Attributes = string.IsNullOrEmpty(player.Attributes) ? "10,10,10,10,10,10" : player.Attributes;
-                    player.AttackUnarmed = string.IsNullOrEmpty(player.AttackUnarmed) ? "0/1_bludgeoning" : player.AttackUnarmed;
-                    player.AttackList = string.IsNullOrEmpty(player.AttackList) ? "0/1_slashing" : player.AttackList;
-                    player.DefenseArmor = string.IsNullOrEmpty(player.DefenseArmor) ? "10" : player.DefenseArmor;
-                    player.HealthDice = string.IsNullOrEmpty(player.HealthDice) ? "1d6" : player.HealthDice;
-                    player.Name = string.IsNullOrEmpty(player.Name) ? "Unnamed" : player.Name;
+            // Log the properties
+            Console.WriteLine($"Class: {player.Class}");
+            Console.WriteLine($"Experience: {player.Experience}");
+            Console.WriteLine($"Attributes: {player.Attributes}");
+            Console.WriteLine($"AttackUnarmed: {player.AttackUnarmed}");
+            Console.WriteLine($"AttackList: {player.AttackList}");
+            Console.WriteLine($"DefenseArmor: {player.DefenseArmor}");
+            Console.WriteLine($"Health: {player.Health}");
+            Console.WriteLine($"HealthDice: {player.HealthDice}");
+            Console.WriteLine($"Name: {player.Name}");
 
-
-                    player.Level = player.Level == 0 ? 1 : player.Level;
-                    player.Score = player.Score == 0 ? 0 : player.Score;
-                    player.Proficiency = player.Proficiency == 0 ? 2 : player.Proficiency;
-
-                    Console.WriteLine($"Class: {player.Class}");
-                    Console.WriteLine($"Experience: {player.Experience}");
-                    Console.WriteLine($"Attributes: {player.Attributes}");
-                    Console.WriteLine($"AttackUnarmed: {player.AttackUnarmed}");
-                    Console.WriteLine($"AttackList: {player.AttackList}");
-                    Console.WriteLine($"DefenseArmor: {player.DefenseArmor}");
-                    Console.WriteLine($"HealthDice: {player.HealthDice}");
-                    Console.WriteLine($"Name: {player.Name}");
-
-                    result.Add($"{player.Name.Split("_")[0]}", new ActorPlayer(player));
-                }
-                
-                catch (Exception ex) {
-                    Console.WriteLine($"Error processing player with ID {player.Id}: {ex.Message}");
-                }
-            }
-
-            return result;
+            result.Add($"{player.Name.Split("_")[0]}", new ActorPlayer(player));
         }
+        catch (Exception ex) {
+            Console.WriteLine($"Error processing player with ID {player.Id}: {ex.Message}");
+        }
+    }
+
+    return result;
+}
+
 
         //  GetMethod - Get All Players Name
         public List<string> GetAllPlayersName() {
