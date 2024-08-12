@@ -51,6 +51,14 @@ namespace Project2.API.Controllers {
             return _Data.GetEnemyByName(pName);
         }
 
+        //  GetMethod - Get Enemy Article
+        [HttpGet("/getEnemyArticle/{pId}")]
+        public string? GetEnemyArticle(int pId) {
+            Console.WriteLine($"HttpGet : Get Enemy {pId} Article");
+            return _Data.GetEnemyArticle(pId);
+        }
+
+
         //  GetMethod - Get All Enemies
         [HttpGet("/getAllEnemies")]
         public Dictionary<string, ActorEnemy> GetAllEnemies() {
@@ -150,6 +158,20 @@ namespace Project2.API.Controllers {
         public string? GetPlayerName(int pId) {
             Console.WriteLine($"HttpGet : Get Player {pId} Name");
             return _Data.GetPlayerName(pId);
+        }
+
+        //  GetMethod - Get Player Article
+        [HttpGet("/getPlayerArticle/{pId}")]
+        public string? GetPlayerArticle(int pId) {
+            Console.WriteLine($"HttpGet : Get Player {pId} Article");
+            return _Data.GetPlayerArticle(pId);
+        }
+
+        //  GetMethod - Get Player Defense
+        [HttpGet("/getPlayerDefense/{pId}")]
+        public string? GetPlayerDefense(int pId) {
+            Console.WriteLine($"HttpGet : Get Player {pId} Defense");
+            return _Data.GetPlayerDefense(pId);
         }
 
         //  Get Player Attributes

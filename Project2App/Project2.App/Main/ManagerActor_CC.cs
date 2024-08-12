@@ -11,6 +11,10 @@ namespace Project2.App.Main {
         //  ~Reference Variables
         public ManagerActor RefMActor { get; private set; }
         private ManagerGame refMGame => RefMActor.RefMGame;
+
+        //  Creation Variables
+        private bool createPreset = true;
+
         //  Constructor
         public ManagerActor_CC(ManagerActor pRef) {
             //  Setup ~Reference
@@ -19,69 +23,73 @@ namespace Project2.App.Main {
 
         //  MainMethod - Character Creation
         public async void CharacterCreation() {
-            //CC_Initial();
+            if (createPreset == true) {
+                //  Get or create user
+                string userStr = refMGame.Client.GetStringAsync("getUserByName/BobUser").Result;
+                UserPlayer? user = JsonConvert.DeserializeObject<UserPlayer>(userStr);
 
-            //  Get or create user
-            string userStr = refMGame.Client.GetStringAsync("getUserByName/BobUser").Result;
-            UserPlayer? user = JsonConvert.DeserializeObject<UserPlayer>(userStr);
+                if (user == null) {
+                    var userResponse = await refMGame.Client.PostAsync("createUser/BobUser", null);
+                    userStr = refMGame.Client.GetStringAsync("getUserByName/BobUser").Result;
+                    user = JsonConvert.DeserializeObject<UserPlayer>(userStr);
+                }
 
-            if (user == null) {
-                var userResponse = await refMGame.Client.PostAsync("createUser/BobUser", null);
-                userStr = refMGame.Client.GetStringAsync("getUserByName/BobUser").Result;
-                user = JsonConvert.DeserializeObject<UserPlayer>(userStr);
+                //  Get or create player
+                string playerStr = refMGame.Client.GetStringAsync($"getPlayerByName/{user.Id}/Bob").Result ?? "";
+                ActorPlayer? player = JsonConvert.DeserializeObject<ActorPlayer>(playerStr);
+
+                if (player == null) {
+                    var playerResponse = await refMGame.Client.PostAsync($"createEmptyPlayer/{user.Id}/Bob", null);
+                    playerStr = refMGame.Client.GetStringAsync($"getPlayerByName/{user.Id}/Bob").Result;
+                    player = JsonConvert.DeserializeObject<ActorPlayer>(playerStr);
+                }
+
+                //  Rolling attributes
+                string attrStr = refMGame.Client.GetStringAsync($"createAttributePool/2d6+6").Result;
+                List<int> attributePool = JsonConvert.DeserializeObject<List<int>>(attrStr) ?? new List<int>();
+                attributePool.Sort();
+                attributePool.Reverse();
+
+                //  Assigning attributes
+                string attributes = string.Join(",", attributePool);
+                var attrResponse = await refMGame.Client.PostAsync($"createPlayerAttributes/{player.Id}/{attributes}", null);
+
+                //  Create class
+                var classJson = JsonContent.Create<string>("Fighter");
+                var classResponse = await refMGame.Client.PostAsync($"createPlayerClass/{player.Id}", classJson);
+
+                //  Create level and experience
+                var expJson = JsonContent.Create<string>("5_3000/6000");
+                var expResponse = await refMGame.Client.PostAsync($"createPlayerLevel/{player.Id}", expJson);
+
+                //  Create skill
+                var skillJson = JsonContent.Create<int>(3);
+                var skillResponse = await refMGame.Client.PostAsync($"createPlayerSkill/{player.Id}", skillJson);
+
+                //  Create health
+                var healthJson = JsonContent.Create<string>("5d10");
+                var healthResponse = await refMGame.Client.PostAsync($"createPlayerHealth/{player.Id}", healthJson);
+
+                //  Create unarmed attack
+                var unarmedJson = JsonContent.Create<string>("fists_punches with their_Melee_0/0_1_bludgeoning");
+                var unarmedResponse = await refMGame.Client.PostAsync($"createPlayerUnarmed/{player.Id}", unarmedJson);
+
+                //  Create weapon attack
+                var longswordJson = JsonContent.Create<string>("longsword_swings with their_Melee_0/1d8_0_slashing");
+                var attackResponse = await refMGame.Client.PostAsync($"createPlayerAttack/{player.Id}", longswordJson);
+
+                //  Create defense
+                var armorJson = JsonContent.Create<string>("Breastplate_14+DEX/M2");
+                var defenseResponse = await refMGame.Client.PostAsync($"createPlayerDefense/{player.Id}", armorJson);
+
+                //  Get Player
+                var lastResponse = refMGame.Client.GetStringAsync($"getPlayerById/{player.Id}").Result;
+                RefMActor.Player = new ActorPlayer(JsonConvert.DeserializeObject<ActorPlayer>(lastResponse));
             }
 
-            //  Get or create player
-            string playerStr = refMGame.Client.GetStringAsync($"getPlayerByName/{user.Id}/Bob").Result ?? "";
-            ActorPlayer? player = JsonConvert.DeserializeObject<ActorPlayer>(playerStr);
-
-            if (player == null) {
-                var playerResponse = await refMGame.Client.PostAsync($"createEmptyPlayer/{user.Id}/Bob", null);
-                playerStr = refMGame.Client.GetStringAsync($"getPlayerByName/{user.Id}/Bob").Result;
-                player = JsonConvert.DeserializeObject<ActorPlayer>(playerStr);
+            else {
+                CC_Initial();
             }
-
-            //  Rolling attributes
-            string attrStr = refMGame.Client.GetStringAsync($"createAttributePool/2d6+6").Result;
-            List<int> attributePool = JsonConvert.DeserializeObject<List<int>>(attrStr) ?? new List<int>();
-            attributePool.Sort();
-            attributePool.Reverse();
-
-            //  Assigning attributes
-            string attributes = string.Join(",", attributePool);
-            var attrResponse = await refMGame.Client.PostAsync($"createPlayerAttributes/{player.Id}/{attributes}", null);
-
-            //  Create class
-            var classJson = JsonContent.Create<string>("Fighter");
-            var classResponse = await refMGame.Client.PostAsync($"createPlayerClass/{player.Id}", classJson);
-
-            //  Create level and experience
-            var expJson = JsonContent.Create<string>("5_3000/6000");
-            var expResponse = await refMGame.Client.PostAsync($"createPlayerLevel/{player.Id}", expJson);
-
-            //  Create skill
-            var skillJson = JsonContent.Create<int>(3);
-            var skillResponse = await refMGame.Client.PostAsync($"createPlayerSkill/{player.Id}", skillJson);
-
-            //  Create health
-            var healthJson = JsonContent.Create<string>("5d10");
-            var healthResponse = await refMGame.Client.PostAsync($"createPlayerHealth/{player.Id}", healthJson);
-
-            //  Create unarmed attack
-            var unarmedJson = JsonContent.Create<string>("fists_punches with their_Melee_0/0_1_bludgeoning");
-            var unarmedResponse = await refMGame.Client.PostAsync($"createPlayerUnarmed/{player.Id}", unarmedJson);
-
-            //  Create weapon attack
-            var longswordJson = JsonContent.Create<string>("longsword_swings with their_Melee_0/1d8_0_slashing");
-            var attackResponse = await refMGame.Client.PostAsync($"createPlayerAttack/{player.Id}", longswordJson);
-
-            //  Create defense
-            var armorJson = JsonContent.Create<string>("Breastplate_14+DEX/M2");
-            var defenseResponse = await refMGame.Client.PostAsync($"createPlayerDefense/{player.Id}", armorJson);
-
-            //  Get Player
-            var lastResponse = refMGame.Client.GetStringAsync($"getPlayerById/{player.Id}").Result;
-            RefMActor.Player = new ActorPlayer(JsonConvert.DeserializeObject<ActorPlayer>(lastResponse));
         }
 
         private async void CC_Initial() {
@@ -179,7 +187,7 @@ namespace Project2.App.Main {
 
             refMGame.WriteText("Rolling Attributes", 75);
             refMGame.WriteLine("...", 400);
-            Thread.Sleep(500);
+            refMGame.WriteLine("", 500);
 
             //  Rolling attributes
             Console.WriteLine($"createAttributePool/{rollMethod}");
@@ -335,6 +343,7 @@ namespace Project2.App.Main {
                 }
             }
 
+            //  Setup Class
             var classJson = JsonContent.Create<string>(classType);
             var classResponse = await refMGame.Client.PostAsync($"createPlayerClass/{pId}", classJson);
             while(classResponse == null) {
@@ -342,51 +351,26 @@ namespace Project2.App.Main {
                 Thread.Sleep(200);
             }
 
+            //  Setup Experience
             var expJson = JsonContent.Create<string>("5_3000/6000");
             var expResponse = await refMGame.Client.PostAsync($"createPlayerLevel/{pId}", expJson);
             while(expResponse == null) {
-                Console.WriteLine("-Pause 2");
                 Thread.Sleep(200);
             }
 
+            //  Setup Skill
             var skillJson = JsonContent.Create<int>(3);
             var skillResponse = await refMGame.Client.PostAsync($"createPlayerSkill/{pId}", skillJson);
             while(skillResponse == null) {
-                Console.WriteLine("-Pause 3");
-                Thread.Sleep(200);
-            }
-
-            var healthJson = JsonContent.Create<string>("5d10");
-            var healthResponse = await refMGame.Client.PostAsync($"createPlayerHealth/{pId}", healthJson);
-            while(healthResponse == null) {
-                Console.WriteLine("-Pause 4");
                 Thread.Sleep(200);
             }
 
             //  Setup Health
-            /*
-            switch(player.Class) {
-                case "Fighter":
-                    player.HealthDice = $"{player.Level}d10";
-                    refMGame.WriteLine($"Assigning {player.Level}d10 to health dice", 25);
-
-                    string conMod = $"{((player.D_AttrMod["CON"] > 0) ? "+" : "")}{((player.D_AttrMod["CON"]!=0) ? "" + player.D_AttrMod["CON"] : "")}";
-
-                    player.HealthBase = 10 + player.D_AttrMod["CON"];
-                    refMGame.WriteLine($"- Adding 10{conMod} to health for level 1", 25);
-
-                    /*
-                    for(int i = 1; i < player.Level; i++) {
-                        int amt = (refRand.Next(0, 10)+1);
-                        player.HealthBase += amt + player.D_AttrMod["CON"];
-                        refMGame.WriteLine($"- Adding {amt}{conMod} to health for level {i+1}", 25);
-                    }
-                    refMGame.WriteLine($"Setting max health to {player.HealthBase}", 25);
-                    
-                    player.HealthCurr = 0 + player.HealthBase;
-                    break;
+            var healthJson = JsonContent.Create<string>("5d10");
+            var healthResponse = await refMGame.Client.PostAsync($"createPlayerHealth/{pId}", healthJson);
+            while(healthResponse == null) {
+                Thread.Sleep(200);
             }
-            */
             Console.WriteLine("");
 
             CC_Combat(pId);
@@ -398,72 +382,37 @@ namespace Project2.App.Main {
             var unarmedJson = JsonContent.Create<string>(unarmed);
             var unarmedResponse = await refMGame.Client.PostAsync($"createPlayerUnarmed/{pId}", unarmedJson);
             while(unarmedResponse == null) {
-                Console.WriteLine("-Pause 5");
                 Thread.Sleep(200);
             }
-            /*
-            player.Atk_Unarmed = new GameAttack("fists", "punches with their", "Melee", 0, "0_1_bludgeoning");
-            player.AttackUnarmed += "fists_punches with their_Melee_0/0_1_bludgeoning";
-            refMGame.WriteLine("Giving player an unarmed melee attack called 'fists' with 1 bludgeoning damage", 25);
-            */
 
             //  Setup Combat
             string longsword = "longsword_swings with their_Melee_0/1d8_0_slashing";
             var longswordJson = JsonContent.Create<string>(longsword);
             var attackResponse = await refMGame.Client.PostAsync($"createPlayerAttack/{pId}", longswordJson);
             while(attackResponse == null) {
-                Console.WriteLine("-Pause 6");
                 Thread.Sleep(200);
             }
-            /*
-            player.Atk_List = new List<GameAttack>();
-            player.Atk_List.Add(new GameAttack("longsword", "swings with their", "Melee", 0, "1d8_0_slashing"));
-            player.AttackList += "longsword_swings with their_Melee_0/1d8_0_slashing";
-            refMGame.WriteLine("Giving player a melee attack called 'longsword' with 1d8 slashing damage", 25);
-            Console.WriteLine("");
-            */
 
             //  Setup Defense
             string armor = "Breastplate_14+DEX/M2";
             var armorJson = JsonContent.Create<string>(armor);
             var defenseResponse = await refMGame.Client.PostAsync($"createPlayerDefense/{pId}", armorJson);
             while(defenseResponse == null) {
-                Console.WriteLine("-Pause 6");
                 Thread.Sleep(200);
             }
-            /*
-            player.DefenseArmor = "Breastplate_14+DEX/M2";
-            player.Def_ArmoredAC = 14 + ((player.D_AttrMod["DEX"] > 2) ? 2 : player.D_AttrMod["DEX"]);
-            refMGame.WriteLine($"Giving player a breastplate with 14{((player.D_AttrMod["DEX"] > 0) ? "+" : "")}{player.D_AttrMod["DEX"]}({player.Def_ArmoredAC}) AC", 25);
-            Console.WriteLine("");
-            */
 
-            /*
-            string userStr = refMGame.Client.GetStringAsync("getUserByName/BobUser").Result;
-            UserPlayer user = JsonConvert.DeserializeObject<UserPlayer>(userStr);
-            Console.WriteLine(user == null);
-
-            if (user == null) {
-                var userJson = JsonContent.Create<UserPlayer>(new UserPlayer() { Name = "BobUser", });
-                var userResponse = await refMGame.Client.PostAsync("createUser", userJson);
+            string defStr = "";
+            while((defStr = refMGame.Client.GetStringAsync($"getPlayerDefense/{pId}").Result) == "") {
+                Thread.Sleep(400);
             }
 
-            userStr = refMGame.Client.GetStringAsync("getUserByName/BobUser").Result;
-            player.UserId = JsonConvert.DeserializeObject<UserPlayer>(userStr).Id;
-            //player.User = user;
+            CC_End(pId);
+        }
 
-            var playerJson = JsonContent.Create<ActorPlayer>(player);
-            Console.WriteLine(refMGame.Client.BaseAddress + "createPlayer");
-            var postResponse = await refMGame.Client.PostAsync("createPlayer", playerJson);
-            //Console.WriteLine(postResponse.Content.ReadAsStringAsync().Result);
-            */
-
-            var playerResponse = refMGame.Client.GetStringAsync($"getPlayerById/{pId}").Result;
-            while(playerResponse == null) {
-                Console.WriteLine("-Pause 7");
-                Thread.Sleep(200);
-            }
-            RefMActor.Player = new ActorPlayer(JsonConvert.DeserializeObject<ActorPlayer>(playerResponse));
+        private async void CC_End(int pId) {
+            //  Get Player
+            var lastResponse = refMGame.Client.GetStringAsync($"getPlayerById/{pId}").Result;
+            RefMActor.Player = new ActorPlayer(JsonConvert.DeserializeObject<ActorPlayer>(lastResponse));
         }
     }
 }
