@@ -1,8 +1,3 @@
-//using System;
-//using System.Net.Http;
-//using System.Net.Http.Json;
-//using System.Text.Json;
-//using Newtonsoft.Json;
 using Project2.Models.Actor;
 using Project2.Models.User;
 
@@ -14,6 +9,9 @@ namespace Project2.App.Main {
 
         //  End Variables
         public bool Force_Quit;
+
+        //  Game Variables
+        private bool textSleep = false;
 
         //  Manager Variables
         public ManagerActor M_Actor { get; private set; }
@@ -43,7 +41,10 @@ namespace Project2.App.Main {
         public void WriteText(string pText, int pSleep) {
             for(int i = 0; i < pText.Length; i++) {
                 Console.Write(pText.Substring(i, 1));
-                //Thread.Sleep(pSleep);
+
+                if (textSleep == false) {
+                    Thread.Sleep(pSleep);
+                }
             }
         }
 

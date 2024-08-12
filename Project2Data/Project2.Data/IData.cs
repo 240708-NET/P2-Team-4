@@ -11,6 +11,7 @@ namespace Project2.Data {
         public ActorEnemy? GetEnemy(ActorEnemy pEnemy);
         public ActorEnemy? GetEnemyById(int pId);
         public ActorEnemy? GetEnemyByName(string pName);
+        public string GetEnemyArticle(int pId);
         public Dictionary<string, ActorEnemy> GetAllEnemies();
         public ActorEnemy? GetRandomEnemy();
         public ActorEnemy? CreateEnemy(ActorEnemy pEnemy);
@@ -25,6 +26,8 @@ namespace Project2.Data {
         public ActorPlayer? GetPlayerByName(int pUserId, string pName);
         public Dictionary<string, ActorPlayer> GetAllPlayers();
         public string GetPlayerName(int pId);
+        public string GetPlayerArticle(int pId);
+        public string GetPlayerDefense(int pId);
         public List<string> GetAllPlayersName();
         public string? GetPlayerAttributes(int pUserId, int pId);
         public ActorPlayer? CreatePlayer(ActorPlayer pPlayer);

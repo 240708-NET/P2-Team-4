@@ -66,6 +66,21 @@ namespace Project2.Data {
             return context.Enemies.FirstOrDefault(p => p.Name == pName);
         }
 
+        //  GetMethod - Get Enemy Article
+        public string GetEnemyArticle(int pId) {
+            ActorEnemy? enemy = GetEnemyById(pId);
+            
+            if (enemy != null) {
+                if (enemy.Name != null && enemy.Name != "") {
+                    string first = enemy.Name.Substring(0, 1);
+                    return (first == "a" || first == "e" || first == "i" || first == "o" || first == "u") ? "an" : "a";
+                }
+                return "ERROR (GetEnemyArticle): Enemy Name Not Valid";
+            }
+
+            return "";
+        }
+
         //  GetMethod - Get All Enemies
         public Dictionary<string, ActorEnemy> GetAllEnemies() {
             Dictionary<string, ActorEnemy> result = new Dictionary<string, ActorEnemy>();
@@ -207,60 +222,86 @@ namespace Project2.Data {
 
         // Just a test method to see if we can get all players from the database
         // just to demonastrate that we can get data from the database
-     public Dictionary<string, ActorPlayer> GetAllPlayers() {
-    Dictionary<string, ActorPlayer> result = new Dictionary<string, ActorPlayer>();
-    List<ActorPlayer> Players = context.Players.ToList();
+        public Dictionary<string, ActorPlayer> GetAllPlayers() {
+        Dictionary<string, ActorPlayer> result = new Dictionary<string, ActorPlayer>();
+        List<ActorPlayer> Players = context.Players.ToList();
 
-    Console.WriteLine($"Fetched {Players.Count} players from the database.");
+        Console.WriteLine($"Fetched {Players.Count} players from the database.");
 
-    foreach (ActorPlayer player in Players) {
-        try {
-            Console.WriteLine($"Processing player: {player.Name}, ID: {player.Id}");
+        foreach (ActorPlayer player in Players) {
+            try {
+                Console.WriteLine($"Processing player: {player.Name}, ID: {player.Id}");
 
-            // Check if the properties are null or empty and assign default values if necessary
-            player.Class = string.IsNullOrEmpty(player.Class) ? "fighter" : player.Class;
-            player.Experience = string.IsNullOrEmpty(player.Experience) ? "0/300" : player.Experience;
-            player.Attributes = string.IsNullOrEmpty(player.Attributes) ? "10,10,10,10,10,10" : player.Attributes;
-            player.AttackUnarmed = string.IsNullOrEmpty(player.AttackUnarmed) ? "0/1_bludgeoning" : player.AttackUnarmed;
-            player.AttackList = string.IsNullOrEmpty(player.AttackList) ? "0/1_slashing" : player.AttackList;
-            player.DefenseArmor = string.IsNullOrEmpty(player.DefenseArmor) ? "10" : player.DefenseArmor;
-            player.HealthDice = string.IsNullOrEmpty(player.HealthDice) ? "1d6" : player.HealthDice;
-            player.Name = string.IsNullOrEmpty(player.Name) ? "Unnamed" : player.Name;
-            player.Health = string.IsNullOrEmpty(player.Health) ? "10" : player.Health;
-            player.Level = player.Level == 0 ? 1 : player.Level;
-            player.Score = player.Score == 0 ? 0 : player.Score;
-            player.Proficiency = player.Proficiency == 0 ? 2 : player.Proficiency;
+                // Check if the properties are null or empty and assign default values if necessary
+                player.Class = string.IsNullOrEmpty(player.Class) ? "fighter" : player.Class;
+                player.Experience = string.IsNullOrEmpty(player.Experience) ? "0/300" : player.Experience;
+                player.Attributes = string.IsNullOrEmpty(player.Attributes) ? "10,10,10,10,10,10" : player.Attributes;
+                player.AttackUnarmed = string.IsNullOrEmpty(player.AttackUnarmed) ? "0/1_bludgeoning" : player.AttackUnarmed;
+                player.AttackList = string.IsNullOrEmpty(player.AttackList) ? "0/1_slashing" : player.AttackList;
+                player.DefenseArmor = string.IsNullOrEmpty(player.DefenseArmor) ? "10" : player.DefenseArmor;
+                player.HealthDice = string.IsNullOrEmpty(player.HealthDice) ? "1d6" : player.HealthDice;
+                player.Name = string.IsNullOrEmpty(player.Name) ? "Unnamed" : player.Name;
+                player.Health = string.IsNullOrEmpty(player.Health) ? "10" : player.Health;
+                player.Level = player.Level == 0 ? 1 : player.Level;
+                player.Score = player.Score == 0 ? 0 : player.Score;
+                player.Proficiency = player.Proficiency == 0 ? 2 : player.Proficiency;
 
-            // Log the properties
-            Console.WriteLine($"Class: {player.Class}");
-            Console.WriteLine($"Experience: {player.Experience}");
-            Console.WriteLine($"Attributes: {player.Attributes}");
-            Console.WriteLine($"AttackUnarmed: {player.AttackUnarmed}");
-            Console.WriteLine($"AttackList: {player.AttackList}");
-            Console.WriteLine($"DefenseArmor: {player.DefenseArmor}");
-            Console.WriteLine($"Health: {player.Health}");
-            Console.WriteLine($"HealthDice: {player.HealthDice}");
-            Console.WriteLine($"Name: {player.Name}");
+                // Log the properties
+                Console.WriteLine($"Class: {player.Class}");
+                Console.WriteLine($"Experience: {player.Experience}");
+                Console.WriteLine($"Attributes: {player.Attributes}");
+                Console.WriteLine($"AttackUnarmed: {player.AttackUnarmed}");
+                Console.WriteLine($"AttackList: {player.AttackList}");
+                Console.WriteLine($"DefenseArmor: {player.DefenseArmor}");
+                Console.WriteLine($"Health: {player.Health}");
+                Console.WriteLine($"HealthDice: {player.HealthDice}");
+                Console.WriteLine($"Name: {player.Name}");
 
-            result.Add($"{player.Name.Split("_")[0]}", new ActorPlayer(player));
+                result.Add($"{player.Name.Split("_")[0]}", new ActorPlayer(player));
+            }
+            catch (Exception ex) {
+                Console.WriteLine($"Error processing player with ID {player.Id}: {ex.Message}");
+            }
         }
-        catch (Exception ex) {
-            Console.WriteLine($"Error processing player with ID {player.Id}: {ex.Message}");
-        }
+
+        return result;
     }
 
-    return result;
-}
-
-
         //  GetMethod - Get Player Name
-        public string? GetPlayerName(int pId) {
+        public string GetPlayerName(int pId) {
             ActorPlayer? player = GetPlayerById(pId);
+            
             if (player != null) {
                 return player.Name;
             }
 
-            return null;
+            return "";
+        }
+
+        //  GetMethod - Get Player Article
+        public string GetPlayerArticle(int pId) {
+            ActorPlayer? player = GetPlayerById(pId);
+            
+            if (player != null) {
+                if (player.Name != null && player.Name != "") {
+                    string first = player.Name.Substring(0, 1);
+                    return (first == "a" || first == "e" || first == "i" || first == "o" || first == "u") ? "an" : "a";
+                }
+                return "ERROR (GetPlayerArticle): Player Name Not Valid";
+            }
+
+            return "";
+        }
+
+        //  GetMethod - Get Player Defense
+        public string GetPlayerDefense(int pId) {
+            ActorPlayer? player = GetPlayerById(pId);
+            
+            if (player != null) {
+                return player.DefenseArmor;
+            }
+
+            return "";
         }
 
         //  GetMethod - Get All Players Name
